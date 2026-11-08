@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proctored Class Test</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#eef2f7; --card:#ffffff; --ink:#18212d; --muted:#5d6878; --line:#d9e0e8;
+  --brand:#1f4e79; --brand2:#2d6aa3; --ok:#18794e; --okbg:#e3f4ea; --warn:#a86400; --warnbg:#fff3dc;
+  --bad:#b42318; --badbg:#fde8e6; --sel:#e6eef8; --shadow:0 6px 24px rgba(20,35,60,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button{font:inherit;cursor:pointer}
+.hidden{display:none!important}
+.screen{display:none;min-height:100%;}
+.screen.active{display:flex}
+.center{align-items:center;justify-content:center;padding:24px 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:28px;width:100%;max-width:560px}
+.card.wide{max-width:900px}
+h1{font-size:22px;margin:0 0 2px;color:var(--brand)}
+h2{font-size:19px;margin:0 0 14px;color:var(--brand)}
+.sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+label.f{display:block;font-weight:600;font-size:13px;margin:12px 0 4px}
+input.t{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fbfcfe}
+input.t:focus,textarea:focus,input.num:focus{outline:2px solid var(--brand2);border-color:transparent}
+.rules{background:#f6f8fb;border:1px solid var(--line);border-radius:10px;padding:12px 16px 12px 30px;margin:16px 0;font-size:13.5px}
+.rules li{margin:4px 0}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;margin:10px 0 16px}
+.agree input{margin-top:4px;width:17px;height:17px}
+.btn{border:0;border-radius:9px;padding:11px 20px;font-weight:600}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand2)}
+.btn.primary:disabled{background:#9db0c4;cursor:not-allowed}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.danger{background:var(--bad);color:#fff}
+.btn.full{width:100%}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin:8px 0}
+.banner{border-radius:9px;padding:10px 14px;font-size:13.5px;margin-bottom:14px}
+.banner.info{background:var(--sel);color:var(--brand)}
+.banner.warn{background:var(--warnbg);color:var(--warn)}
+.gbox{background:#f6f8fb;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:4px}
+.gbox .f{display:block;font-weight:600;font-size:13px;margin:0 0 8px}
+.gwho{font-size:13.5px;color:var(--ok);font-weight:600;margin-top:6px}
+.demo-badge{position:fixed;bottom:10px;left:10px;background:#7a3cc4;color:#fff;
+  font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;z-index:60;letter-spacing:.3px}
+.linkbtn{background:none;border:0;color:var(--brand2);text-decoration:underline;padding:0;font-size:13px}
+
+/* system check */
+.check-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
+.camslot{background:#0e1520;border-radius:12px;overflow:hidden;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.camslot video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+ul.checks{list-style:none;padding:0;margin:0 0 14px}
+ul.checks li{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+ul.checks li .ic{width:20px;height:20px;border-radius:50%;flex:none;background:#c5ced9;position:relative}
+ul.checks li.ok .ic{background:var(--ok)} ul.checks li.ok .ic::after{content:"✓";color:#fff;font-size:12px;position:absolute;left:5px;top:1px}
+ul.checks li.warn .ic{background:#d99a1b} ul.checks li.warn .ic::after{content:"!";color:#fff;font-size:12px;position:absolute;left:8px;top:1px;font-weight:700}
+ul.checks li.bad .ic{background:var(--bad)} ul.checks li.bad .ic::after{content:"✕";color:#fff;font-size:11px;position:absolute;left:5px;top:2px}
+ul.checks li.wait .ic{background:conic-gradient(var(--brand2) 0 25%,#c5ced9 0);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* exam */
+#scr-exam{flex-direction:column;user-select:none;-webkit-user-select:none}
+.topbar{position:sticky;top:0;z-index:20;background:var(--brand);color:#fff;display:flex;align-items:center;gap:14px;
+  padding:10px 18px;flex-wrap:wrap}
+.topbar .ttl{font-weight:700;font-size:16px;flex:1;min-width:200px}
+.topbar .who{font-size:13px;opacity:.9}
+.chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.16)}
+.chip.w1{background:#d99a1b} .chip.w2{background:var(--bad)}
+.timer{font:700 20px/1 ui-monospace,Consolas,monospace;background:#fff;color:var(--brand);padding:7px 12px;border-radius:8px;min-width:96px;text-align:center}
+.timer.low{color:var(--warn)} .timer.crit{color:#fff;background:var(--bad);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.7}}
+.exam-grid{display:grid;grid-template-columns:250px 1fr;gap:18px;padding:18px 18px 40px;max-width:1250px;width:100%;margin:0 auto;flex:1}
+.side{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;align-self:start;position:sticky;top:76px;max-height:calc(100vh - 92px);overflow:auto}
+.side h3{margin:0 0 10px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+#palette{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.pal{border:1px solid var(--line);background:#f4f6f9;border-radius:7px;padding:7px 0;font-weight:600;font-size:13px}
+.pal.seen{background:#fdecea;border-color:#e3a39c}
+.pal.ans{background:var(--ok);color:#fff;border-color:var(--ok)}
+.pal.mark{position:relative;box-shadow:inset 0 0 0 2px #d99a1b}
+.pal.mark::after{content:"⚑";position:absolute;top:-7px;right:-5px;font-size:12px;color:#b26a00;background:#fff;border-radius:50%;line-height:1}
+.pal.cur{outline:2px solid var(--brand);outline-offset:1px}
+.legend{font-size:11.5px;color:var(--muted);margin:12px 0;display:grid;gap:4px}
+.legend span{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px;border:1px solid var(--line)}
+#progress{font-size:13px;font-weight:600;margin:6px 0 12px}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px 28px;min-height:420px;display:flex;flex-direction:column}
+.qhead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:16px}
+.qhead .n{font-weight:700;color:var(--brand)}
+.tag{font-size:12px;background:var(--sel);color:var(--brand);padding:2px 9px;border-radius:12px}
+#qText{font-size:16.5px;line-height:1.65;margin-bottom:16px}
+#qImg[hidden],.optimg[hidden]{display:none!important}
+#qImg{display:block;max-width:100%;max-height:380px;background:#fff;border:1px solid var(--line);border-radius:8px;margin-bottom:16px;pointer-events:none}
+.optimg{max-width:min(320px,100%);max-height:180px;border-radius:6px;border:1px solid var(--line);background:#fff;pointer-events:none}
+img{-webkit-user-drag:none}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;margin:0 0 10px}
+.opt:hover{border-color:var(--brand2)}
+.opt .ok{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none;color:var(--muted)}
+.opt.sel{border-color:var(--brand);background:var(--sel)}
+.opt.sel .ok{background:var(--brand);color:#fff;border-color:var(--brand)}
+input.num{font:600 18px ui-monospace,Consolas,monospace;padding:10px 14px;border:1.5px solid var(--line);border-radius:9px;width:280px;max-width:100%}
+textarea.txt{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--line);border-radius:9px;font:inherit;resize:vertical}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+.qnav{margin-top:auto;padding-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.qnav .sp{flex:1}
+#saveState{font-size:12px;color:var(--muted)}
+.numerr{color:var(--bad);font-size:13px;font-weight:600;margin-top:6px}
+.unit{font-weight:600;color:var(--brand);margin-left:10px}
+#calcWin{position:fixed;top:70px;right:22px;width:340px;max-width:calc(100vw - 20px);max-height:calc(100vh - 16px);overflow:auto;z-index:85;background:#1d2733;color:#eef2f7;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.35);user-select:none}
+#calcWin .ch{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;cursor:move;border-bottom:1px solid #2f3b49;touch-action:none}
+#calcWin .ch b{flex:1;font-size:14px}
+#calcWin .ch button{background:#2f3b49;color:#fff;border:0;border-radius:6px;padding:3px 9px;font-size:12.5px}
+#calcWin .ch .x{background:#b42318;font-size:15px;padding:2px 10px}
+#calcWin .disp{padding:10px 12px 4px}
+#calcIn{width:100%;background:#0f1620;color:#fff;border:1px solid #3a4757;border-radius:8px;padding:8px 10px;font:500 16px ui-monospace,Consolas,monospace;user-select:text}
+#calcRes{font:700 22px ui-monospace,Consolas,monospace;text-align:right;min-height:30px;margin:6px 2px 0;word-break:break-all;color:#9fd3ff}
+#calcRes.err{color:#ff9b8f;font-size:14px;font-weight:600}
+#calcMem{font-size:11px;color:#ffcf6b;min-height:14px;margin:0 2px}
+#calcWin .pad{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:8px 12px}
+#calcWin .pad button{border:0;border-radius:7px;padding:7px 0;font-size:13px;background:#2f3b49;color:#eef2f7}
+#calcWin .pad button:hover{filter:brightness(1.2)}
+#calcWin .pad button.n{background:#46576b;font-size:15px;font-weight:600}
+#calcWin .pad button.o{background:#2d6aa3;font-size:15px}
+#calcWin .pad button.eq{background:#18794e;font-size:16px;font-weight:700}
+#calcWin .pad button.c{background:#8a3b33}
+#calcWin .pad button.m{background:#5b4a1f;color:#ffdf9e}
+#calcWin .foot{padding:0 12px 12px;display:flex;flex-direction:column;gap:6px}
+#calcWin .foot .use{background:#d99a1b;color:#1b1b1b;border:0;border-radius:8px;padding:8px;font-weight:700}
+#calcHist{max-height:84px;overflow:auto;font:12px ui-monospace,Consolas,monospace;color:#b7c3d0}
+#calcHist div{padding:2px 4px;border-radius:4px;cursor:pointer}
+#calcHist div:hover{background:#2f3b49}
+.pbadge{position:fixed;bottom:10px;left:10px;background:#5b6676;color:#fff;font-size:12px;padding:4px 6px 4px 12px;border-radius:20px;z-index:60;display:flex;gap:8px;align-items:center}
+.pbadge button{background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:50%;width:20px;height:20px;line-height:18px;padding:0}
+#timeBanner{background:#fff3dc;color:#8a5200;font-weight:600;text-align:center;padding:6px 10px;font-size:14px}
+#saveState.err{color:var(--bad)}
+
+/* floating camera */
+#camFloat{position:fixed;right:14px;bottom:14px;width:170px;z-index:30;background:#0e1520;border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+#camFloat video{width:100%;display:block;transform:scaleX(-1)}
+#camFloat.docked{position:static;width:100%;margin:0 0 12px;box-shadow:none}
+#camFloat.docked video{max-height:150px;object-fit:cover}
+#monLabel{font-size:11px;color:#fff;padding:4px 8px;display:flex;gap:6px;align-items:center}
+#monDot{width:8px;height:8px;border-radius:50%;background:#3ccf7a}
+#monDot.alert{background:#ffb020} #monDot.off{background:#888}
+
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(10,18,30,.93);display:flex;align-items:center;justify-content:center;padding:20px;color:#fff;text-align:center}
+.overlay .box{max-width:520px}
+.overlay h2{color:#fff;font-size:24px}
+.overlay .big{font:700 54px/1 ui-monospace,Consolas,monospace;margin:16px 0;color:#ffb020}
+.modal-back{position:fixed;inset:0;z-index:90;background:rgba(10,18,30,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:#fff;border-radius:14px;max-width:480px;width:100%;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35);border-top:6px solid var(--brand)}
+.modal.warn{border-top-color:#d99a1b} .modal.bad{border-top-color:var(--bad)}
+.modal h3{margin:0 0 10px;font-size:19px}
+.modal.bad h3{color:var(--bad)} .modal.warn h3{color:var(--warn)}
+.modal .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#18212d;color:#fff;padding:9px 16px;border-radius:8px;font-size:13.5px;z-index:95;opacity:0;transition:opacity .25s;pointer-events:none}
+#toast.show{opacity:1}
+#watermark{position:fixed;inset:0;pointer-events:none;z-index:5;opacity:.06}
+
+/* done */
+table.log{width:100%;border-collapse:collapse;font-size:12.5px}
+table.log td,table.log th{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left}
+
+@media (max-width:820px){
+  .exam-grid{grid-template-columns:1fr}
+  .side{position:static;max-height:none}
+  #palette{grid-template-columns:repeat(8,1fr)}
+  .check-grid{grid-template-columns:1fr}
+  #camFloat{width:110px}
+  .qcard{padding:18px 16px}
+}
+</style>
+</head>
+<body>
+
+<div id="demoBadge" class="pbadge hidden"><span id="demoText">Practice mode</span><button id="demoClose" title="Hide">×</button></div>
+<div id="watermark"></div>
+
+<!-- ========================= LOGIN ========================= -->
+<section id="scr-login" class="screen center active">
+  <div class="card">
+    <h1 id="loginTitle">Proctored Class Test</h1>
+    <p class="sub" id="instName"></p>
+    <div id="resumeBanner" class="banner warn hidden">
+      Your previous exam session was interrupted. Log in again to <b>resume once</b>. The timer has kept running.
+      If the exam closes again after this, it will be submitted automatically.
+    </div>
+    <div id="gBox" class="gbox hidden">
+      <div class="f" style="margin-top:0">Step 1 · Sign in with your <span id="gDomains">institute</span> Google account</div>
+      <div id="gBtn"></div>
+      <div id="gWho" class="gwho hidden"></div>
+    </div>
+    <label class="f" for="inName">Full name (as in college records)</label>
+    <input class="t" id="inName" autocomplete="off" maxlength="80">
+    <label class="f" for="inRoll">Roll / Enrolment number</label>
+    <input class="t" id="inRoll" autocomplete="off" maxlength="30" style="text-transform:uppercase">
+    <label class="f" for="inCode">Exam code (given by your teacher)</label>
+    <input class="t" id="inCode" autocomplete="off" maxlength="30">
+
+    <ul class="rules">
+      <li>The test runs in <b>full screen</b> with your <b>camera on</b>. Use a laptop/desktop with Chrome or Edge and a single monitor.</li>
+      <li>Photos are taken at random times and whenever you look away from the screen, your face is not visible, or another person appears. <b>You may look down at your rough sheet</b>, and a calculator is built into the exam (a physical scientific calculator is also allowed).</li>
+      <li>Switching tab/app, minimising, Alt+Tab or opening another window is recorded with a photo.
+          <b>1st time: warning. 2nd time: the exam is submitted automatically.</b> Before starting, close WhatsApp/Teams, turn on <i>Do not disturb</i> (Focus assist) and plug in your charger.</li>
+      <li>Do not press Esc. If full screen exits, return to it immediately.</li>
+      <li>If the exam closes by accident, reopen this page and log in again: you may <b>resume once</b>. The timer does not stop.</li>
+      <li>Copy, paste, right-click, printing and screenshots are disabled.</li>
+    </ul>
+    <label class="agree"><input type="checkbox" id="inAgree">
+      <span>I agree to be monitored through my camera during this test. Photos and activity logs are seen only by the course teacher, used only to check exam integrity, and deleted after results are declared.</span></label>
+    <div class="err" id="loginErr"></div>
+    <button class="btn primary full" id="btnContinue">Continue to system check</button>
+    <p style="text-align:center;margin:12px 0 0" id="demoReset" class="hidden">
+      <button class="linkbtn" id="btnDemoReset">Reset practice data</button></p>
+  </div>
+</section>
+
+<!-- ========================= SYSTEM CHECK ========================= -->
+<section id="scr-check" class="screen center">
+  <div class="card wide">
+    <h2>System check</h2>
+    <div class="check-grid">
+      <div id="camSlotCheck" class="camslot"></div>
+      <div>
+        <ul class="checks">
+          <li id="chkCam"><span class="ic"></span>Camera</li>
+          <li id="chkAI"><span class="ic"></span>Face-monitoring AI</li>
+          <li id="chkFace"><span class="ic"></span>Face position</li>
+          <li id="chkScreen"><span class="ic"></span>Display</li>
+        </ul>
+        <p class="sub">Sit facing the camera in good light and <b>look straight at the screen</b>.
+          Your head position now is used as the reference for “looking away”.</p>
+        <div class="err" id="checkErr"></div>
+        <button class="btn primary full" id="btnStart" disabled>Start exam in full screen</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= EXAM ========================= -->
+<section id="scr-exam" class="screen">
+  <div class="topbar">
+    <div class="ttl" id="examTitle">Class Test</div>
+    <div class="who" id="who"></div>
+    <span class="chip" id="chipFocus">Window: 0</span>
+    <span class="chip" id="chipGaze">Gaze: 0</span>
+    <div class="timer" id="timer" title="The exam is submitted automatically at 00:00">--:--</div>
+  </div>
+  <div id="timeBanner" class="hidden"></div>
+  <div class="exam-grid">
+    <aside class="side">
+      <div id="sideCam"></div>
+      <h3>Questions</h3>
+      <div id="progress"></div>
+      <div id="palette"></div>
+      <div class="legend">
+        <div><span style="background:var(--ok)"></span>Answered</div>
+        <div><span style="background:#fff;border-color:#c99"></span>Visited, not answered</div>
+        <div><span style="box-shadow:inset 0 -4px 0 #d99a1b"></span>Marked for review</div>
+      </div>
+      <button class="btn danger full" id="btnSubmit">Submit exam</button>
+      <button class="btn ghost full" id="btnCalc" style="margin-top:12px">🧮 Open calculator</button>
+    </aside>
+    <article class="qcard">
+      <div class="qhead"><span class="n" id="qNum"></span><span class="tag" id="qType"></span><span class="tag" id="qMarks"></span></div>
+      <div id="qText"></div>
+      <img id="qImg" alt="Question figure" draggable="false" hidden>
+      <div id="qAns"></div>
+      <div class="qnav">
+        <button class="btn ghost" id="btnPrev">← Previous</button>
+        <button class="btn ghost" id="btnMark">Mark for review</button>
+        <span class="sp"></span>
+        <span id="saveState"></span>
+        <button class="btn primary" id="btnNext">Save &amp; Next →</button>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ========================= DONE ========================= -->
+<section id="scr-done" class="screen center">
+  <div class="card" style="text-align:center;max-width:720px">
+    <div style="font-size:46px" id="doneIcon">✅</div>
+    <h2 id="doneHead">Your exam has been submitted</h2>
+    <p class="sub" id="doneReason"></p>
+    <p id="doneScore" style="font-size:18px"></p>
+    <p class="sub" id="doneTime"></p>
+    <p class="sub">You may now close this window.</p>
+    <div id="retryBox" class="hidden">
+      <p class="err" id="retryMsg"></p>
+      <button class="btn primary" id="btnRetry">Retry submission</button>
+    </div>
+  </div>
+</section>
+
+<!-- floating camera (video element is moved between slots) -->
+<div id="camFloat" class="hidden">
+  <video id="cam" autoplay muted playsinline></video>
+  <div id="monLabel"><span id="monDot"></span><span id="monText">Monitoring</span></div>
+</div>
+<canvas id="snap" width="320" height="240" hidden></canvas>
+
+<div id="fsOverlay" class="overlay hidden">
+  <div class="box">
+    <h2>You left full-screen mode</h2>
+    <p id="fsMsg">Return to full screen to continue. If you do not return in time, this will be recorded as a violation.</p>
+    <div class="big" id="fsCount">10</div>
+    <button class="btn primary" id="btnFs">Return to full screen</button>
+  </div>
+</div>
+<div id="busy" class="overlay hidden"><div class="box"><h2 id="busyMsg">Please wait…</h2></div></div>
+<div id="modalBack" class="modal-back hidden">
+  <div class="modal" id="modal"><h3 id="mTitle"></h3><div id="mBody"></div><div class="acts" id="mActs"></div></div>
+</div>
+<div id="toast"></div>
+<div id="calcWin" class="hidden" role="dialog" aria-label="Scientific calculator">
+  <div class="ch" id="calcHead"><b>🧮 Scientific calculator</b>
+    <button id="calcMode" title="Angle unit for sin, cos, tan (click to switch)">RAD</button>
+    <button class="x" id="calcClose" title="Close calculator">✕</button></div>
+  <div class="disp">
+    <input id="calcIn" autocomplete="off" spellcheck="false" placeholder="Type or tap, e.g. sqrt(800/2)/(2π)">
+    <div id="calcRes"></div><div id="calcMem"></div>
+  </div>
+  <div class="pad" id="calcPad">
+    <button data-k="sin(">sin</button><button data-k="cos(">cos</button><button data-k="tan(">tan</button><button data-k="ln(">ln</button><button data-k="log(">log</button><button data-k="sqrt(">√</button>
+    <button data-k="asin(">sin⁻¹</button><button data-k="acos(">cos⁻¹</button><button data-k="atan(">tan⁻¹</button><button data-k="exp(">eˣ</button><button data-k="10^(">10ˣ</button><button data-k="cbrt(">∛</button>
+    <button data-k="sinh(">sinh</button><button data-k="cosh(">cosh</button><button data-k="tanh(">tanh</button><button data-k="^2">x²</button><button data-k="^3">x³</button><button data-k="^">xʸ</button>
+    <button data-k="root(" title="root(n, x) = n-th root of x">ʸ√x</button><button data-k="1/(">1/x</button><button data-k="abs(">|x|</button><button data-k="!">n!</button><button data-k="π">π</button><button data-k="e">e</button>
+    <button class="m" data-a="MC" title="Clear memory">MC</button><button class="m" data-k="M" title="Recall memory">MR</button><button class="m" data-a="M+" title="Add result to memory">M+</button><button class="m" data-a="M-" title="Subtract result from memory">M−</button><button data-k=",">,</button><button data-k="Ans">Ans</button>
+    <button class="n" data-k="7">7</button><button class="n" data-k="8">8</button><button class="n" data-k="9">9</button><button data-k="(">(</button><button data-k=")">)</button><button class="c" data-a="DEL">⌫</button>
+    <button class="n" data-k="4">4</button><button class="n" data-k="5">5</button><button class="n" data-k="6">6</button><button class="o" data-k="×">×</button><button class="o" data-k="÷">÷</button><button class="c" data-a="AC">AC</button>
+    <button class="n" data-k="1">1</button><button class="n" data-k="2">2</button><button class="n" data-k="3">3</button><button class="o" data-k="+">+</button><button class="o" data-k="−">−</button><button data-k="×10^(" title="Exponent: ×10ⁿ">EXP</button>
+    <button class="n" data-k="0">0</button><button class="n" data-k=".">.</button><button data-k="−" title="Negative sign">(−)</button><button data-k="%" title="Percent">%</button><button class="eq" data-a="EQ" style="grid-column:span 2">=</button>
+  </div>
+  <div class="foot">
+    <button class="use" id="calcUse">↵ Put result in the answer box</button>
+    <div id="calcHist"></div>
+  </div>
+</div>
+
+
+<script src="config.js"></script>  <!-- optional: window.EXAM_BACKEND_URL = "https://script.google.com/macros/s/…/exec"; -->
+<script>
+'use strict';
+/* =====================================================================
+   CONFIGURATION – edit these lines
+   ===================================================================== */
+const BACKEND_URL = (() => {   // paste the web-app URL here, OR share the page link with ?b=<web-app URL> (admin.html builds it)
+  const fixed = String(window.EXAM_BACKEND_URL || 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE').trim();   // config.js (next to this page) can set it
+  if (/^https:\/\/script\.google/.test(fixed)) return fixed;
+  const b = new URLSearchParams(location.search).get('b') || '';
+  return /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(b) ? b : fixed;
+})();
+const INSTITUTE   = 'Department of Mechanical Engineering, NIT Agartala';
+
+// Head-pose monitoring thresholds (relative to the student's own calibrated position)
+const MON = {
+  YAW_TOL: 0.13,        // sideways head turn (≈ 20–25°)
+  DOWN_TOL: 0.10,       // looking down
+  UP_TOL: 0.10,         // looking up
+  AWAY_SEC: 2.5,        // must be sustained this long before a warning
+  NOFACE_SEC: 3,        // face missing this long → warning
+  MULTI_SEC: 1,         // second face visible this long → warning
+  COOLDOWN_SEC: 12,     // minimum gap between gaze warnings
+  FS_GRACE_SEC: 10,     // seconds allowed to return to full screen
+  BLUR_GRACE_MS: 900,   // focus lost this long → photo taken
+  BLUR_STRIKE_MS: 2500, // still lost after this long → counts as a warning (shorter = logged only)
+  BRIEF_LIMIT: 3,       // this many brief focus losses together count as one warning
+  DOWN_SEC: 15,         // looking down (if the teacher enabled the check) must last this long
+  AI_TIMEOUT_MS: 45000  // give up loading the face AI after this long
+};
+const MP_VER = '0.10.3';   // MediaPipe Tasks Vision (face landmarker)
+
+/* ===================================================================== */
+const DEMO = !/^https:\/\/script\.google(usercontent)?\.com\//.test(BACKEND_URL);
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+const S = {
+  name: '', roll: '', code: '', exam: null, rules: {}, lsKey: '',
+  answers: {}, marked: {}, visited: {}, idx: 0,
+  focusV: 0, gazeW: 0, endTime: 0, offset: 0,
+  running: false, submitting: false, starting: false, unloading: false, dirty: false,
+  lastViolationAt: 0, lastGazeAt: -999, awayState: null, awaySince: 0, faceState: 'noface',
+  stream: null, detector: null, aiState: 'loading', calib: [], baseline: null,
+  timers: [], saveT: null, snapT: null, fsT: null, blurT: null, loopT: null,
+  modalOpen: false, warned5: false, lastSubmitArgs: null,
+  needLogin: false, idToken: null, email: '', sid: '', domains: []
+};
+
+/* ------------------------------------------------ demo question bank */
+const DEMO_EXAM = {
+  title: 'Mechanical Vibrations – Practice Test',
+  durationMin: 10,
+  rules: { maxFocus: 2, maxGaze: 5, checkDown: false, snapMin: 2, showScore: true },
+  questions: [
+    { id: 'Q1', type: 'mcq', q: 'The undamped natural frequency of a single-DOF spring–mass system is', marks: 1, answer: 'A',
+      opts: [{ k: 'A', t: '$\\sqrt{k/m}$' }, { k: 'B', t: '$\\sqrt{m/k}$' }, { k: 'C', t: '$k/m$' }, { k: 'D', t: '$2\\pi\\sqrt{m/k}$' }] },
+    { id: 'Q2', type: 'mcq', q: 'For an underdamped system the damping ratio $\\zeta$ lies in the range', marks: 1, answer: 'B',
+      opts: [{ k: 'A', t: '$\\zeta = 1$' }, { k: 'B', t: '$0 < \\zeta < 1$' }, { k: 'C', t: '$\\zeta > 1$' }, { k: 'D', t: '$\\zeta < 0$' }] },
+    { id: 'Q3', type: 'numeric', q: 'A 2 kg mass is attached to a spring of stiffness 800 N/m. Find the natural frequency $\\omega_n$ in rad/s.', marks: 2, answer: '20', tol: 1, opts: [] },
+    { id: 'Q4', type: 'numeric', q: 'Find the logarithmic decrement $\\delta$ for a system with $\\zeta = 0.05$ (3 decimal places).', marks: 2, answer: '0.315', tol: 1, opts: [] },
+    { id: 'Q5', type: 'mcq', q: 'At resonance ($r = 1$) in damped forced vibration, the phase angle between force and displacement is', marks: 1, answer: 'C',
+      opts: [{ k: 'A', t: '0°' }, { k: 'B', t: '45°' }, { k: 'C', t: '90°' }, { k: 'D', t: '180°' }] },
+    { id: 'Q6', type: 'text', q: 'Name the phenomenon in which the amplitude of forced vibration becomes maximum when the excitation frequency equals the natural frequency.', marks: 1, answer: 'resonance', opts: [] },
+    { id: 'Q7', type: 'mcq', q: 'For the system shown in the figure (two identical springs of stiffness $k$ supporting a mass $m$), the natural frequency is', marks: 1, answer: 'A',
+      img: 'data:image/svg+xml;base64,' + btoa(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="230" viewBox="0 0 300 230" font-family="Arial">' +
+        '<rect width="300" height="230" fill="#fff"/><rect x="40" y="14" width="220" height="10" fill="#555"/>' +
+        Array.from({ length: 11 }, (_, i) => `<line x1="${44 + i * 20}" y1="14" x2="${54 + i * 20}" y2="4" stroke="#555"/>`).join('') +
+        [95, 205].map(x => `<polyline fill="none" stroke="#1f4e79" stroke-width="2.5" points="${x},24 ${x},40 ${x - 12},48 ${x + 12},60 ${x - 12},72 ${x + 12},84 ${x - 12},96 ${x + 12},108 ${x},116 ${x},132"/>` +
+          `<text x="${x + 18}" y="82" font-size="18" fill="#1f4e79" font-style="italic">k</text>`).join('') +
+        '<rect x="70" y="132" width="160" height="64" rx="4" fill="#dbe4f0" stroke="#1f4e79" stroke-width="2.5"/>' +
+        '<text x="150" y="172" font-size="22" text-anchor="middle" font-style="italic" fill="#18212d">m</text></svg>'),
+      opts: [{ k: 'A', t: '$\\sqrt{2k/m}$' }, { k: 'B', t: '$\\sqrt{k/2m}$' }, { k: 'C', t: '$\\sqrt{k/m}$' }, { k: 'D', t: '$2\\sqrt{k/m}$' }] }
+  ]
+};
+
+/* If the teacher built an exam in admin.html (demo mode, same browser), use it */
+function demoExam() {
+  try {
+    const b = JSON.parse(localStorage.getItem('pexam_demo_bank') || 'null');
+    if (b && b.questions && b.questions.length) {
+      const st = b.settings || {};
+      return {
+        examId: b.examId || 'PRACTICE-ADMIN', title: st.TITLE || 'Class Test', code: String(st.EXAM_CODE || 'PRACTICE'), institute: st.INSTITUTE || INSTITUTE,
+        durationMin: Number(st.DURATION_MIN) || 10, perStudent: Number(st.QUESTIONS_PER_STUDENT) || 0,
+        shuffle: st.SHUFFLE !== false, shuffleOpts: st.SHUFFLE_OPTIONS !== false,
+        rules: { maxFocus: Number(st.MAX_FOCUS_VIOLATIONS) || 2, maxGaze: Number(st.MAX_GAZE_WARNINGS) || 0,
+          checkDown: st.CHECK_LOOK_DOWN === true, snapMin: Number(st.SNAPSHOT_EVERY_MIN) || 0, showScore: st.SHOW_SCORE === true },
+        allowed: String(st.ALLOWED_ROLLS || '').split(/[\s,;]+/).map(r => r.trim().toUpperCase()).filter(Boolean),
+        questions: b.questions.map(q => ({ id: q.id, type: q.type, q: q.q, marks: Number(q.marks) || 1, answer: String(q.answer || ''),
+          tol: q.tol === '' || q.tol == null ? 1 : Number(q.tol), img: q.img || '',
+          opts: q.type === 'mcq' ? ['A', 'B', 'C', 'D'].filter(k => String(q[k] || '').trim()).map(k => ({ k, t: q[k] })) : [] }))
+      };
+    }
+  } catch (_) {}
+  return Object.assign({ examId: 'PRACTICE', code: 'PRACTICE', perStudent: 0, shuffle: true, shuffleOpts: true, institute: INSTITUTE }, DEMO_EXAM);
+}
+
+function seededShuffle(arr, seed) {           // same algorithm as the server
+  let h = 1779033703 ^ seed.length;
+  for (let i = 0; i < seed.length; i++) { h = Math.imul(h ^ seed.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+  let a = h >>> 0;
+  const rnd = () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const out = arr.slice();
+  for (let i = out.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [out[i], out[j]] = [out[j], out[i]]; }
+  return out;
+}
+
+/* =====================================================================
+   BACKEND COMMUNICATION
+   ===================================================================== */
+async function api(action, data) {
+  if (DEMO) return mockApi(action, data);
+  const body = JSON.stringify(Object.assign({ action, sid: S.sid }, data));
+  let lastErr;
+  for (let i = 0; i < 5; i++) {
+    try {
+      const r = await fetch(BACKEND_URL, { method: 'POST', body });   // text/plain → no CORS preflight
+      const j = await r.json();
+      if (j && j.busy && i < 4) { await sleep(1500 * (i + 1) + Math.random() * 1000); continue; }   // server queue full: wait, retry
+      return j;
+    } catch (e) { lastErr = e; await sleep(1000 * (i + 1)); }
+  }
+  throw lastErr || new Error('Server busy');
+}
+
+function beaconSave() {
+  if (!S.exam) return;
+  const d = { action: 'save', sid: S.sid, examId: S.exam.examId, roll: S.roll, answers: S.answers };
+  if (DEMO) { mockApi('save', d); return; }
+  try { navigator.sendBeacon(BACKEND_URL, new Blob([JSON.stringify(d)], { type: 'text/plain;charset=utf-8' })); } catch (_) {}
+}
+
+/* ------------------------------------------------ demo backend (localStorage) */
+function gradeLocal(qs, ans) {
+  let score = 0, max = 0;
+  const norm = s => String(s).toLowerCase().replace(/[^a-z0-9.\- ]/g, ' ').replace(/\s+/g, ' ').trim();
+  qs.forEach(q => {
+    max += q.marks; const a = ans[q.id];
+    if (a == null || String(a).trim() === '') return;
+    if (q.type === 'mcq' && String(a).toUpperCase() === q.answer.toUpperCase()) score += q.marks;
+    else if (q.type === 'numeric') {
+      const x = parseFloat(a), k = parseFloat(q.answer);
+      if (isFinite(x) && Math.abs(x - k) <= Math.max(Math.abs(k) * (q.tol || 1) / 100, 1e-9)) score += q.marks;
+    } else if (q.type === 'text') {
+      const stop = ['the', 'a', 'an', 'of', 'is', 'called', 'known', 'as', 'phenomenon', 'damping', 'speed', 'method', 'methods', 's', 'type', 'condition'];
+      const core = x => x.split(' ').filter(w => w && !stop.includes(w)).join(' ');
+      const keys = q.answer.split('|').map(norm);
+      if (keys.includes(norm(a)) || keys.map(core).includes(core(norm(a)))) score += q.marks;
+    }
+  });
+  return { score, max };
+}
+
+function mockApi(action, d) {
+  let db; try { db = JSON.parse(localStorage.getItem('pexam_demo_db') || '{}'); } catch (_) { db = {}; }
+  db.sessions = db.sessions || {}; db.log = db.log || [];
+  const E = demoExam();
+  const now = Date.now(), R = E.rules, roll = String(d.roll || '').toUpperCase(), seed = E.examId + '|' + roll;
+  const log = (kind, detail) => db.log.push({ t: new Date().toLocaleTimeString(), roll, kind, detail });
+  const assign = () => {
+    const bank = E.questions, n = E.perStudent;
+    let pick = n > 0 && n < bank.length ? seededShuffle(bank, seed + '|pick').slice(0, n) : bank.slice();
+    pick = E.shuffle ? seededShuffle(pick, seed) : bank.filter(q => pick.includes(q));
+    return pick.map(q => q.id);
+  };
+  const mine = qids => qids.map(id => E.questions.find(q => q.id === id)).filter(Boolean);
+  const pub = qids => mine(qids).map(q => ({ id: q.id, type: q.type, q: q.q, marks: q.marks, img: q.img || '', tol: q.type === 'numeric' ? q.tol : undefined,
+    opts: E.shuffleOpts && q.opts.length > 1 ? seededShuffle(q.opts, seed + '|' + q.id) : q.opts }));
+  const fin = (s, ans, reason) => {
+    const qs = mine(s.qids || assign()), g = gradeLocal(qs, ans || {});
+    const details = qs.map(q => { const one = gradeLocal([q], ans || {}); const a = (ans || {})[q.id]; return q.id + ': ' + (a == null || a === '' ? '—' : String(a).slice(0, 20) + (one.score ? ' ✓' : ' ✗')); }).join(' | ');
+    Object.assign(s, { status: 'SUBMITTED', answers: ans, reason, score: g.score, max: g.max, details });
+    log('SUBMIT', reason);
+    return { ok: true, autoSubmitted: true, reason, score: g.score, max: g.max, showScore: R.showScore };
+  };
+  let s = db.sessions[roll], out = { ok: true };
+  const keepPhoto = (data, kind, detail) => {        // practice mode: photos for the teacher's Photos tab
+    let ph; try { ph = JSON.parse(localStorage.getItem('pexam_demo_photos') || '[]'); } catch (_) { ph = []; }
+    ph.push({ examId: (s && s.examId) || E.examId, roll, name: (s && s.name) || d.name || '', t: new Date().toLocaleString(), kind, detail: String(detail || '').slice(0, 140), data });
+    for (let cut = 0; cut < 5; cut++) {
+      try { localStorage.setItem('pexam_demo_photos', JSON.stringify(ph.slice(-150))); break; } catch (_) { ph = ph.slice(Math.ceil(ph.length / 3)); }
+    }
+  };
+  switch (action) {
+    case 'start': {
+      if (String(d.code || '').trim().toUpperCase() !== E.code.toUpperCase()) { out = { ok: false, error: 'Invalid exam code.' }; break; }
+      if (E.allowed && E.allowed.length && !E.allowed.includes(roll)) { out = { ok: false, error: 'Your roll number is not registered for this exam. Contact your teacher.' }; break; }
+      if (s && s.examId !== E.examId) s = null;          // teacher published a new demo exam
+      const qids = s ? s.qids : assign();
+      const base = { examId: E.examId, title: E.title, serverNow: now, questions: pub(qids), rules: R };
+      if (!s) {
+        s = db.sessions[roll] = { examId: E.examId, qids, name: d.name, start: now, end: now + E.durationMin * 60000, starts: 1, status: 'ACTIVE', focus: 0, gaze: 0, answers: {} };
+        log('START', '');
+        out = Object.assign({ ok: true, mode: 'new', endTime: s.end, answers: {}, focusViolations: 0, gazeWarnings: 0 }, base);
+        break;
+      }
+      if (s.status === 'SUBMITTED') { out = { ok: false, submitted: true, error: 'You have already submitted this exam.' }; break; }
+      s.starts++;
+      const merged = Object.assign({}, s.answers, d.localAnswers || {});
+      if (now > s.end) { out = fin(s, merged, 'Time over (exam re-opened after end time)'); break; }
+      if (s.starts > 2) { out = fin(s, merged, 'Exam closed and re-opened a second time – auto-submitted'); break; }
+      log('RESUME', 'Resume #' + (s.starts - 1));
+      out = Object.assign({ ok: true, mode: 'resume', endTime: s.end, answers: s.answers, focusViolations: s.focus, gazeWarnings: s.gaze }, base);
+      break;
+    }
+    case 'save':
+      if (!s || s.status !== 'ACTIVE') { out = { ok: false, closed: true }; break; }
+      s.answers = d.answers || {}; break;
+    case 'event':
+      if (s && s.status === 'ACTIVE') {
+        if (d.kind === 'focus') s.focus = Math.max(s.focus, d.count || s.focus + 1);
+        if (d.kind === 'gaze') s.gaze = Math.max(s.gaze, d.count || s.gaze + 1);
+        if (d.answers) s.answers = d.answers;
+      }
+      log(String(d.kind).toUpperCase(), d.detail || '');
+      if (d.photo && s && s.status === 'ACTIVE') keepPhoto(d.photo, String(d.kind).toUpperCase(), d.detail);
+      break;
+    case 'submit':
+      if (!s) { out = { ok: false, error: 'No session' }; break; }
+      if (s.status === 'SUBMITTED') { out = { ok: true, already: true, reason: s.reason, score: s.score, max: s.max, showScore: R.showScore }; break; }
+      if (d.photo) { log('FINAL_PHOTO', d.reason || ''); keepPhoto(d.photo, 'FINAL_PHOTO', d.reason); }
+      out = fin(s, d.answers || s.answers, d.reason || 'Submitted'); break;
+  }
+  try { localStorage.setItem('pexam_demo_db', JSON.stringify(db)); } catch (_) {}
+  return Promise.resolve(JSON.parse(JSON.stringify(out)));
+}
+
+/* =====================================================================
+   UI HELPERS
+   ===================================================================== */
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function fmtText(s) { return esc(s).replace(/\n/g, '<br>'); }
+const isUrl = s => /^(https?:\/\/\S+|data:image\/[\w+.-]+;base64,\S+)$/.test(String(s).trim());
+function optHtml(t) {
+  return isUrl(t) ? '<img class="optimg" src="' + esc(String(t).trim()) + '" alt="Option figure" draggable="false" onerror="this.replaceWith(Object.assign(document.createElement(\'em\'),{textContent:\'[image could not load]\'}))">'
+                  : '<span>' + fmtText(t) + '</span>';
+}
+function typeset(el) {
+  if (window.renderMathInElement) {
+    try {
+      renderMathInElement(el, { throwOnError: false, delimiters: [
+        { left: '$$', right: '$$', display: true }, { left: '\\[', right: '\\]', display: true },
+        { left: '$', right: '$', display: false }, { left: '\\(', right: '\\)', display: false }] });
+    } catch (_) {}
+  }
+}
+function toast(msg, ms) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms || 2200);
+}
+function showModal(title, html, buttons, kind) {
+  $('mTitle').textContent = title; $('mBody').innerHTML = html;
+  $('modal').className = 'modal' + (kind ? ' ' + kind : '');
+  const acts = $('mActs'); acts.innerHTML = '';
+  (buttons || [{ label: 'OK' }]).forEach(b => {
+    const el = document.createElement('button');
+    el.className = 'btn ' + (b.cls || 'primary'); el.textContent = b.label;
+    el.onclick = () => { closeModal(); if (b.fn) b.fn(); };
+    acts.appendChild(el);
+  });
+  $('modalBack').classList.remove('hidden'); S.modalOpen = true;
+  setTimeout(() => acts.lastChild && acts.lastChild.focus(), 50);
+}
+function closeModal() { $('modalBack').classList.add('hidden'); S.modalOpen = false; }
+function busy(msg) { if (msg) { $('busyMsg').textContent = msg; $('busy').classList.remove('hidden'); } else $('busy').classList.add('hidden'); }
+function setCheck(id, state, text) { const li = $(id); li.className = state; li.innerHTML = '<span class="ic"></span>' + esc(text); }
+function fmtT(sec) {
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60, p = n => String(n).padStart(2, '0');
+  return (h ? h + ':' + p(m) : p(m)) + ':' + p(s);
+}
+function setWatermark() {
+  const txt = esc(S.roll + '  ' + S.name);
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='360' height='200'><text x='20' y='120' font-size='20' font-family='Arial' fill='#000' transform='rotate(-24 180 100)'>${txt}</text></svg>`;
+  $('watermark').style.backgroundImage = 'url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
+}
+function exitFs() { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); }
+function stopCamera() {
+  clearInterval(S.loopT); S.loopT = null;
+  if (S.stream) S.stream.getTracks().forEach(t => t.stop());
+  $('camFloat').classList.add('hidden');
+}
+
+/* =====================================================================
+   LOGIN + SYSTEM CHECK
+   ===================================================================== */
+function initLogin() {
+  $('instName').textContent = INSTITUTE;
+  if (DEMO) {
+    const E0 = demoExam();
+    $('loginTitle').textContent = E0.title; $('instName').textContent = E0.institute || INSTITUTE;
+    $('demoText').textContent = 'Practice mode (offline) · exam code: ' + E0.code;
+    $('demoBadge').classList.remove('hidden'); $('demoReset').classList.remove('hidden');
+    $('demoClose').onclick = () => $('demoBadge').classList.add('hidden');
+  }
+  if (!DEMO) initGoogle();
+  try {
+    const a = JSON.parse(localStorage.getItem('pexam_active') || 'null');
+    if (a) { $('inName').value = a.name; $('inRoll').value = a.roll; $('inCode').value = a.code; $('resumeBanner').classList.remove('hidden'); }
+  } catch (_) {}
+  $('btnContinue').onclick = onContinue;
+  $('btnStart').onclick = onStart;
+  $('btnFs').onclick = () => document.documentElement.requestFullscreen().catch(() => toast('Click again to enter full screen'));
+  $('btnPrev').onclick = () => { if (S.idx > 0) go(S.idx - 1); };
+  $('btnNext').onclick = () => { if (S.idx < S.exam.questions.length - 1) go(S.idx + 1); else confirmSubmit(); };
+  $('btnMark').onclick = () => { const id = S.exam.questions[S.idx].id; S.marked[id] = !S.marked[id]; saveLocal(); renderQ(); };
+  $('btnSubmit').onclick = confirmSubmit;
+  $('btnRetry').onclick = () => { $('retryBox').classList.add('hidden'); S.submitting = false; finish(S.lastSubmitArgs[0], S.lastSubmitArgs[1]); };
+  $('btnDemoReset').onclick = () => {
+    Object.keys(localStorage).filter(k => k.startsWith('pexam_') && k !== 'pexam_demo_bank').forEach(k => localStorage.removeItem(k));
+    $('resumeBanner').classList.add('hidden'); toast('Practice data cleared');
+  };
+}
+
+/* ---------- Google sign-in (only when the teacher set GOOGLE_CLIENT_ID) ---------- */
+async function initGoogle() {
+  let info;
+  try { info = await api('info', {}); } catch (e) { return loginErr('Cannot reach the exam server. Check your internet connection and reload.'); }
+  if (!info || !info.ok) return;
+  if (info.title) $('loginTitle').textContent = info.title;
+  if (info.institute) $('instName').textContent = info.institute;
+  if (!info.clientId) return;
+  S.needLogin = true; S.domains = info.domains || [];
+  $('gDomains').textContent = S.domains.length ? S.domains.join(' or ') : 'Google';
+  $('gBox').classList.remove('hidden');
+  const sc = document.createElement('script');
+  sc.src = 'https://accounts.google.com/gsi/client'; sc.async = true;
+  sc.onerror = () => loginErr('Google sign-in could not load. Check your internet connection and reload.');
+  sc.onload = () => {
+    google.accounts.id.initialize({ client_id: info.clientId, callback: onGoogle, auto_select: false, cancel_on_tap_outside: true });
+    google.accounts.id.renderButton($('gBtn'), { theme: 'outline', size: 'large', text: 'signin_with', shape: 'pill' });
+  };
+  document.head.appendChild(sc);
+}
+function onGoogle(resp) {
+  let p = {};
+  try { p = JSON.parse(decodeURIComponent(escape(atob(resp.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))); } catch (_) {}
+  const email = String(p.email || '').toLowerCase(), host = email.split('@')[1] || '';
+  if (S.domains.length && !S.domains.some(d => host === d || host.endsWith('.' + d))) {
+    S.idToken = null; $('gWho').classList.add('hidden');
+    return loginErr('Please sign in with your ' + S.domains.join(' or ') + ' email address (you chose ' + email + ').');
+  }
+  S.idToken = resp.credential; S.email = email; $('loginErr').textContent = '';
+  $('gWho').textContent = '✓ Signed in as ' + email;
+  $('gWho').classList.remove('hidden');
+  if (!$('inName').value.trim() && p.name) $('inName').value = p.name;
+}
+
+function loginErr(m) { $('loginErr').textContent = m; const b = $('btnContinue'); b.disabled = false; b.textContent = 'Continue to system check'; }
+function checkErr(m) { $('checkErr').textContent = m || ''; }
+
+async function onContinue() {
+  const name = $('inName').value.trim(), roll = $('inRoll').value.trim().toUpperCase(), code = $('inCode').value.trim();
+  $('loginErr').textContent = '';
+  if (!name || !roll || !code) return loginErr('Please fill in your name, roll number and exam code.');
+  if (S.needLogin && !S.idToken) return loginErr('Please sign in with your Google account first (Step 1).');
+  if (!$('inAgree').checked) return loginErr('Please accept the proctoring conditions to continue.');
+  if (!document.documentElement.requestFullscreen) return loginErr('This browser cannot run full-screen mode. Use Google Chrome or Microsoft Edge on a laptop/desktop.');
+  if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) return loginErr('Camera access is unavailable. Open the exam link (https://) in Chrome or Edge.');
+  if (matchMedia('(pointer:coarse)').matches && !matchMedia('(any-pointer:fine)').matches)
+    return loginErr('This test must be taken on a laptop or desktop computer, not a phone or tablet.');
+  if (window.screen && screen.isExtended === true) return loginErr('A second monitor is connected. Disconnect it, then reload this page.');
+  Object.assign(S, { name, roll, code });
+
+  const b = $('btnContinue'); b.disabled = true; b.textContent = 'Requesting camera…';
+  try {
+    S.stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }, audio: false });
+  } catch (e) {
+    return loginErr('Camera permission was denied or no camera was found. The exam cannot start without the camera. Allow camera access (lock icon in the address bar) and try again.');
+  }
+  const v = $('cam'); v.srcObject = S.stream; v.play().catch(() => {});
+  S.stream.getVideoTracks()[0].addEventListener('ended', () => { if (S.running) violation('Camera was switched off or disconnected'); });
+
+  $('camSlotCheck').appendChild(v); v.play().catch(() => {});   // moving a <video> pauses it
+  show('scr-check');
+  setCheck('chkCam', 'ok', 'Camera connected');
+  setCheck('chkAI', 'wait', 'Downloading face-monitoring AI (can take up to a minute on slow internet)…');
+  setCheck('chkFace', 'wait', 'Waiting for face check…');
+  setCheck('chkScreen', window.screen && screen.isExtended === false ? 'ok' : 'warn',
+    window.screen && screen.isExtended === false ? 'Single display' : 'Display count could not be verified – use one screen only');
+  startDetectLoop();
+  const ok = await Promise.race([loadDetector(), sleep(MON.AI_TIMEOUT_MS).then(() => false)]);
+  if (!ok) S.detector = null;
+  S.aiState = ok ? 'ok' : 'off';
+  setCheck('chkAI', ok ? 'ok' : 'warn', ok ? 'Face-monitoring AI ready' : 'AI could not load – exam will use photo snapshots only');
+  if (!ok) setCheck('chkFace', 'warn', 'Face check unavailable');
+  updateStartBtn();
+}
+
+async function loadDetector() {
+  try {
+    const mod = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MP_VER}`);
+    const vision = mod.FaceLandmarker ? mod : mod.default;
+    const files = await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MP_VER}/wasm`);
+    const opts = delegate => ({
+      baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task', delegate },
+      runningMode: 'VIDEO', numFaces: 2
+    });
+    try { S.detector = await vision.FaceLandmarker.createFromOptions(files, opts('GPU')); }
+    catch (_) { S.detector = await vision.FaceLandmarker.createFromOptions(files, opts('CPU')); }
+    return true;
+  } catch (e) {
+    console.warn('Face AI unavailable:', e);
+    S.detector = null; return false;
+  }
+}
+
+function updateStartBtn() {
+  if (S.starting) return;
+  const faceOk = S.faceState === 'ok' && S.calib.length >= 8;
+  const ready = S.stream && S.aiState !== 'loading' && (S.aiState === 'off' || faceOk);
+  $('btnStart').disabled = !ready;
+}
+
+async function onStart() {
+  const btn = $('btnStart'); S.starting = true; btn.disabled = true; btn.textContent = 'Starting…'; checkErr('');
+  try { await document.documentElement.requestFullscreen({ navigationUI: 'hide' }); }
+  catch (e) { S.starting = false; btn.textContent = 'Start exam in full screen'; updateStartBtn(); return checkErr('Full-screen mode was blocked by the browser. Allow it and try again.'); }
+  for (let i = 0; i < 15 && !trueFs(); i++) await sleep(200);   // full-screen animation can take ~1–2 s
+  if (!trueFs()) {
+    exitFs(); S.starting = false; btn.textContent = 'Start exam in full screen'; updateStartBtn();
+    return checkErr('Full screen did not cover the monitor (' + fsSizes() + '). If you opened this inside another app or a preview, open it directly in Google Chrome or Microsoft Edge and try again.');
+  }
+
+  if (S.calib.length >= 5) {
+    const med = a => { const s = a.slice().sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
+    S.baseline = { yaw: med(S.calib.map(p => p.yaw)), pitch: med(S.calib.map(p => p.pitch)) };
+  }
+  let res;
+  let localAnswers = null, resumeKey = null;
+  try { resumeKey = localStorage.getItem('pexam_rk_' + S.roll); } catch (_) {}
+  S.startNonce = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now());
+  try { const a = JSON.parse(localStorage.getItem('pexam_active') || 'null'); if (a && a.roll === S.roll && a.lsKey) localAnswers = (JSON.parse(localStorage.getItem(a.lsKey) || 'null') || {}).answers || null; } catch (_) {}
+  try { res = await api('start', { roll: S.roll, name: S.name, code: S.code, ua: navigator.userAgent, idToken: S.idToken, localAnswers, resumeKey, nonce: S.startNonce }); }
+  catch (e) { res = { ok: false, error: 'Cannot reach the exam server. Check your internet connection and try again.' }; }
+
+  if (!res.ok && res.needLogin) {
+    exitFs(); S.starting = false; btn.textContent = 'Start exam in full screen'; updateStartBtn();
+    S.idToken = null; $('gWho').classList.add('hidden');
+    show('scr-login'); const b = $('btnContinue'); b.disabled = false; b.textContent = 'Continue to system check';
+    return loginErr(res.error);
+  }
+  if (!res.ok) {
+    exitFs(); S.starting = false; btn.textContent = 'Start exam in full screen'; updateStartBtn();
+    if (res.submitted) { try { localStorage.removeItem('pexam_active'); } catch (_) {} }
+    return checkErr(res.error || 'Could not start the exam.');
+  }
+  if (res.autoSubmitted) {
+    try { localStorage.removeItem('pexam_active'); } catch (_) {}
+    stopCamera(); exitFs(); showDone(res); return;
+  }
+  beginExam(res);
+}
+
+/* =====================================================================
+   EXAM
+   ===================================================================== */
+function readLocal() { try { return JSON.parse(localStorage.getItem(S.lsKey) || 'null'); } catch (_) { return null; } }
+function saveLocal() {
+  if (!S.lsKey) return;
+  try { localStorage.setItem(S.lsKey, JSON.stringify({ answers: S.answers, marked: S.marked, visited: S.visited, focusV: S.focusV, gazeW: S.gazeW, t: Date.now() })); } catch (_) {}
+}
+
+function beginExam(res) {
+  S.sid = res.sid || '';
+  try { if (res.resumeKey) localStorage.setItem('pexam_rk_' + S.roll, res.resumeKey); } catch (_) {}
+  S.exam = res; S.rules = res.rules || {}; S.offset = res.serverNow - Date.now(); S.endTime = res.endTime;
+  S.lsKey = 'pexam_' + res.examId + '_' + S.roll;
+  if (res.mode === 'new') { try { localStorage.removeItem('pexam_' + res.examId + '_' + S.roll); } catch (_) {} }   // fresh attempt: no old local data
+  const local = res.mode === 'new' ? {} : (readLocal() || {});
+  S.answers = Object.assign({}, res.answers || {}, local.answers || {});
+  S.marked = local.marked || {}; S.visited = local.visited || {};
+  S.focusV = Math.max(res.focusViolations || 0, local.focusV || 0);
+  S.gazeW = Math.max(res.gazeWarnings || 0, local.gazeW || 0);
+  S.idx = 0; S.running = true; S.submitting = false; S.starting = false;
+  try { localStorage.setItem('pexam_active', JSON.stringify({ name: S.name, roll: S.roll, code: S.code, lsKey: S.lsKey })); } catch (_) {}
+
+  $('camFloat').insertBefore($('cam'), $('monLabel'));
+  $('sideCam').appendChild($('camFloat'));
+  $('camFloat').classList.add('docked');
+  $('camFloat').classList.remove('hidden');
+  $('cam').play().catch(() => {});
+  if (S.aiState !== 'ok') { $('monDot').className = 'off'; $('monText').textContent = 'Photo monitoring'; }
+  $('examTitle').textContent = res.title;
+  $('who').textContent = S.name + ' · ' + S.roll;
+  setWatermark();
+  buildPalette(); renderQ(); updateChips(); tickTimer();
+  S.timers.push(setInterval(tickTimer, 1000), setInterval(() => { if (S.dirty) pushSave(); }, 60000));
+  show('scr-exam');
+
+  sendEvent('start', res.mode === 'resume' ? 'Exam resumed – identity photo' : 'Exam started – identity photo', true);
+  if (S.aiState !== 'ok') sendEvent('ai_off', 'Face-monitoring AI unavailable on this device', false);
+  schedulePeriodic();
+
+  const maxF = Number(S.rules.maxFocus) || 2;
+  if (res.mode === 'resume') {
+    showModal('Exam resumed',
+      '<p>Your exam was interrupted and has been resumed with your saved answers.</p><p><b>This was your only allowed resume.</b> If the exam window is closed again, your answers will be submitted automatically.</p><p>The timer kept running while you were away.</p>',
+      [{ label: 'Continue' }], 'warn');
+  } else {
+    showModal('Before you begin',
+      `<p>Stay in full screen, keep your face visible and look at the screen.</p>
+       <p>If you leave the exam window you get a warning${maxF - 1 > 1 ? ' (' + (maxF - 1) + ' warnings allowed)' : ''}; ${maxF - 1 > 1 ? 'after that' : 'the next time'} the exam is submitted automatically.</p>
+       <p>You may look down at your rough sheet. Use the 🧮 calculator in the left panel or your own scientific calculator.</p>
+       <p>Answers are saved automatically. Use the palette on the left to move between questions.</p>`,
+      [{ label: 'Begin' }]);
+  }
+}
+
+function buildPalette() {
+  const p = $('palette'); p.innerHTML = '';
+  S.exam.questions.forEach((q, i) => {
+    const b = document.createElement('button'); b.className = 'pal'; b.textContent = i + 1; b.onclick = () => go(i); p.appendChild(b);
+  });
+  refreshPalette();
+}
+function refreshPalette() {
+  const btns = $('palette').children; let n = 0;
+  S.exam.questions.forEach((q, i) => {
+    const a = S.answers[q.id] != null && S.answers[q.id] !== ''; if (a) n++;
+    btns[i].className = 'pal' + (a ? ' ans' : (S.visited[q.id] ? ' seen' : '')) + (S.marked[q.id] ? ' mark' : '') + (i === S.idx ? ' cur' : '');
+  });
+  $('progress').textContent = n + ' of ' + S.exam.questions.length + ' answered';
+}
+function go(i) { S.idx = i; renderQ(); }
+
+function renderQ() {
+  const qs = S.exam.questions, q = qs[S.idx];
+  S.visited[q.id] = true;
+  $('qNum').textContent = 'Question ' + (S.idx + 1) + ' of ' + qs.length;
+  $('qType').textContent = { mcq: 'Multiple choice', numeric: 'Numerical answer', text: 'Short answer' }[q.type] || q.type;
+  $('qMarks').textContent = q.marks + (q.marks == 1 ? ' mark' : ' marks');
+  $('qText').innerHTML = fmtText(q.q);
+  const img = $('qImg');
+  if (q.img) { img.hidden = false; img.onerror = () => { img.hidden = true; toast('Figure could not load – tell the invigilator'); }; img.src = q.img; }
+  else { img.hidden = true; img.removeAttribute('src'); }
+
+  const area = $('qAns'); area.innerHTML = '';
+  const cur = S.answers[q.id];
+  if (q.type === 'mcq') {
+    q.opts.forEach((o, i) => {            // options may be shuffled: label by position, store original key
+      const b = document.createElement('button'); b.type = 'button';
+      b.className = 'opt' + (cur === o.k ? ' sel' : '');
+      b.innerHTML = '<span class="ok">' + 'ABCDEF'[i] + '</span>' + optHtml(o.t);
+      b.onclick = () => { setAnswer(q.id, cur === o.k ? '' : o.k); renderQ(); };
+      area.appendChild(b);
+    });
+  } else if (q.type === 'numeric') {
+    const inp = document.createElement('input');
+    Object.assign(inp, { type: 'text', inputMode: 'decimal', className: 'num', placeholder: 'Enter value', value: cur || '', autocomplete: 'off', spellcheck: false });
+    const wrap = document.createElement('div');
+    const um = /\(\s*in\s+([^,()]+?)\s*(?:,|\))/i.exec(q.q);
+    const err = document.createElement('div'); err.className = 'numerr';
+    const check = () => {
+      const v = inp.value.replace(/,/g, '.').replace(/\s+/g, '');
+      if (!v) { err.textContent = ''; setAnswer(q.id, ''); return; }
+      if (/^[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?$/.test(v)) { err.textContent = ''; setAnswer(q.id, v); }
+      else { err.textContent = 'Not a valid number – this answer is NOT saved. Use digits, one decimal point, a minus sign, or e-notation like 2.5e-3 (no fractions or units).'; setAnswer(q.id, ''); }
+    };
+    inp.oninput = check;
+    wrap.appendChild(inp);
+    if (um) { const u = document.createElement('span'); u.className = 'unit'; u.textContent = um[1]; wrap.appendChild(u); }
+    area.appendChild(wrap); area.appendChild(err);
+    const h = document.createElement('div'); h.className = 'hint';
+    h.textContent = 'Type the number only' + (um ? ' (in ' + um[1] + ')' : '') + '.' + (q.tol ? ' Answers within ±' + q.tol + '% are accepted.' : '');
+    area.appendChild(h);
+  } else {
+    const ta = document.createElement('textarea');
+    Object.assign(ta, { className: 'txt', maxLength: 1500, value: cur || '', spellcheck: false, placeholder: 'Type your answer' });
+    ta.oninput = () => setAnswer(q.id, ta.value);
+    area.appendChild(ta);
+  }
+  $('btnPrev').disabled = S.idx === 0;
+  $('btnNext').textContent = S.idx === qs.length - 1 ? 'Review & Submit' : 'Save & Next →';
+  $('btnMark').textContent = S.marked[q.id] ? 'Unmark review' : 'Mark for review';
+  refreshPalette(); saveLocal();
+  typeset($('qText')); typeset(area);
+}
+
+function setAnswer(id, val) {
+  if (!S.running) return;
+  if (val === '' || val == null) delete S.answers[id]; else S.answers[id] = val;
+  S.dirty = true; saveLocal(); refreshPalette(); setSaveState('pending');
+  clearTimeout(S.saveT); S.saveT = setTimeout(pushSave, 5000);
+}
+function setSaveState(s) {
+  const el = $('saveState');
+  el.className = s === 'err' ? 'err' : '';
+  el.textContent = { pending: 'Saving…', saved: 'All answers saved ✓', err: 'Offline – answers kept on this computer' }[s] || '';
+}
+async function pushSave() {
+  if (!S.running) return;
+  S.dirty = false;
+  try {
+    const r = await api('save', { examId: S.exam.examId, roll: S.roll, answers: S.answers });
+    if (r.ok) setSaveState('saved');
+    else if (r.closed) serverClosed(r);
+    else if (r.timeOver) finish('Time over – auto-submitted');
+    else { S.dirty = true; setSaveState('err'); }
+  } catch (e) { S.dirty = true; setSaveState('err'); }
+}
+
+function tickTimer() {
+  if (!S.running) return;
+  if (!trueFs() && $('fsOverlay').classList.contains('hidden') && !S.modalOpen) startFsGrace();
+  const rem = S.endTime - (Date.now() + S.offset), s = Math.max(0, Math.floor(rem / 1000));
+  const t = $('timer'); t.textContent = fmtT(s);
+  t.classList.toggle('low', s <= 300); t.classList.toggle('crit', s <= 60);
+  const tb = $('timeBanner');
+  if (s <= 600 && s > 300 && !S.warned10) { S.warned10 = true; toast('10 minutes remaining', 5000); }
+  if (s <= 300 && s > 0) { tb.classList.remove('hidden'); tb.textContent = '⏰ ' + (s <= 60 ? 'Less than 1 minute' : Math.ceil(s / 60) + ' minutes') + ' left – the exam is submitted automatically at 00:00. Unanswered questions get no marks.'; }
+  else tb.classList.add('hidden');
+  if (rem <= 0) finish('Time over – auto-submitted');
+}
+
+function updateChips() {
+  const mf = Number(S.rules.maxFocus) || 2, mg = Number(S.rules.maxGaze) || 0;
+  const cf = $('chipFocus'), cg = $('chipGaze');
+  const leftF = Math.max(0, mf - 1 - S.focusV);
+  cf.textContent = leftF > 0 ? 'Window: ' + leftF + ' warning' + (leftF > 1 ? 's' : '') + ' left' : 'Window: next = auto-submit';
+  cf.className = 'chip' + (S.focusV >= mf - 1 ? ' w2' : S.focusV ? ' w1' : '');
+  cg.textContent = mg ? 'Look-away: ' + Math.max(0, mg - S.gazeW) + ' left' : 'Look-away warnings: ' + S.gazeW;
+  cg.className = 'chip' + (mg && S.gazeW >= mg - 1 ? ' w2' : S.gazeW ? ' w1' : '');
+}
+
+function confirmSubmit() {
+  const qs = S.exam.questions;
+  const un = [], mk = [];
+  qs.forEach((q, i) => { if (S.answers[q.id] == null || S.answers[q.id] === '') un.push(i); if (S.marked[q.id]) mk.push(i); });
+  const links = l => l.map(i => `<button class="btn ghost" style="padding:3px 9px;margin:2px" onclick="closeModal();go(${i})">${i + 1}</button>`).join('');
+  showModal('Submit your exam?',
+    `<p>Answered: <b>${qs.length - un.length}</b> of ${qs.length}</p>` +
+    (un.length ? `<p>Not answered (click to open):<br>${links(un)}</p>` : '<p>All questions answered ✓</p>') +
+    (mk.length ? `<p>Marked for review:<br>${links(mk)}</p>` : '') +
+    `<p>After submitting you cannot change your answers.</p>`,
+    [{ label: 'Go back', cls: 'ghost' }, { label: 'Submit now', cls: 'danger', fn: () => finish('Submitted by student') }]);
+}
+
+async function finish(reason, photo) {
+  if (S.submitting) return;
+  S.submitting = true; S.running = false; S.lastSubmitArgs = [reason, photo];
+  S.timers.forEach(clearInterval); S.timers = [];
+  clearTimeout(S.saveT); clearTimeout(S.snapT); clearInterval(S.fsT); clearTimeout(S.blurT);
+  closeModal(); $('fsOverlay').classList.add('hidden');
+  saveLocal();
+  if (photo === undefined) photo = capture('final');
+  busy('Submitting your answers…');
+  const payload = { examId: S.exam.examId, roll: S.roll, name: S.name, answers: S.answers, reason, photo,
+    focusViolations: S.focusV, gazeWarnings: S.gazeW };
+  let res = null, lastErr = '';
+  for (let i = 0; i < 4 && !res; i++) {
+    try { const r = await api('submit', payload); if (r && r.ok) res = r; else if (r && r.busy) { lastErr = 'Server busy.'; await sleep(3000 * (i + 1)); } else { lastErr = (r && r.error) || 'Server rejected the submission.'; break; } }
+    catch (e) { lastErr = 'Cannot reach the server.'; await sleep(1500 * (i + 1)); }
+  }
+  busy(null);
+  if (!res) {
+    show('scr-done');
+    $('doneHead').textContent = 'Submission not completed yet';
+    $('doneReason').textContent = reason; $('doneScore').textContent = ''; $('doneTime').textContent = '';
+    $('retryMsg').textContent = lastErr + ' Your answers are safe on this computer. Do NOT close this page – check the internet connection and press Retry.';
+    $('retryBox').classList.remove('hidden');
+    return;
+  }
+  try { localStorage.removeItem(S.lsKey); localStorage.removeItem('pexam_active'); } catch (_) {}
+  stopCamera(); exitFs();
+  showDone(Object.assign({ reason }, res));
+}
+
+/* the server ended this attempt (limit reached on the server, or the session was opened elsewhere) */
+function serverClosed(r) {
+  if (!S.running && !S.submitting) return;
+  S.running = false; S.submitting = true;
+  S.timers.forEach(clearInterval); S.timers = []; clearTimeout(S.snapT); clearInterval(S.fsT);
+  closeModal(); $('fsOverlay').classList.add('hidden'); stopCamera(); exitFs();
+  if (r.autoSubmitted || r.reason) { try { localStorage.removeItem(S.lsKey); localStorage.removeItem('pexam_active'); } catch (_) {} showDone(r); }
+  else showDone({ reason: r.error || 'This exam session was closed.', closedOnly: true });
+}
+function showDone(res) {
+  closeCalc();
+  show('scr-done');
+  $('retryBox').classList.add('hidden');
+  $('doneHead').textContent = res.closedOnly ? 'Session closed – please contact your teacher' : 'Your exam has been submitted';
+  $('doneIcon').textContent = res.closedOnly ? '⚠️' : /auto|time over|closed|late/i.test(res.reason || '') ? '📝' : '✅';
+  $('doneReason').textContent = res.reason || 'Submitted';
+  $('doneTime').textContent = 'Submitted on ' + new Date().toLocaleString();
+  $('doneScore').innerHTML = (res.showScore && res.score != null && res.score !== '') ? 'Provisional score (auto-graded): <b>' + esc(res.score) + ' / ' + esc(res.max) + '</b>' : '';
+}
+
+/* =====================================================================
+   PROCTORING: photos, window/tab monitoring, full screen
+   ===================================================================== */
+function capture(label) {
+  const v = $('cam'), c = $('snap');
+  if (!v.videoWidth) return null;
+  c.width = 320; c.height = Math.round(320 * v.videoHeight / v.videoWidth);
+  const ctx = c.getContext('2d');
+  ctx.drawImage(v, 0, 0, c.width, c.height);
+  ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, c.height - 18, c.width, 18);
+  ctx.fillStyle = '#fff'; ctx.font = '11px Arial';
+  ctx.fillText(S.roll + ' · ' + label + ' · ' + new Date().toLocaleTimeString(), 6, c.height - 5);
+  const url = c.toDataURL('image/jpeg', 0.6);
+  return url;
+}
+
+function sendEvent(kind, detail, withPhoto, extra) {
+  if (!S.exam) return;
+  const photo = withPhoto ? capture(kind) : null;
+  return api('event', Object.assign({ examId: S.exam.examId, roll: S.roll, name: S.name, kind, detail, photo }, extra || {}))
+    .then(r => { if (r && r.closed) serverClosed(r); return r; }).catch(() => {});
+}
+
+function schedulePeriodic() {
+  const m = Number(S.rules.snapMin) || 0; if (!m) return;
+  const ms = m * 60000 * (0.5 + Math.random());
+  S.snapT = setTimeout(() => { if (S.running) { sendEvent('periodic', 'Random snapshot', true); schedulePeriodic(); } }, ms);
+}
+
+function violation(reason) {
+  if (!S.running || S.submitting) return;
+  const now = Date.now();
+  if (now - S.lastViolationAt < 4000) return;          // one incident → one violation
+  S.lastViolationAt = now;
+  S.focusV++; saveLocal(); updateChips();
+  const max = Number(S.rules.maxFocus) || 2;
+  const photo = capture('violation');
+  if (S.focusV >= max) { finish('Auto-submitted: ' + reason + ' (violation ' + S.focusV + ' of ' + max + ')', photo); return; }
+  api('event', { examId: S.exam.examId, roll: S.roll, name: S.name, kind: 'focus', detail: reason, photo, count: S.focusV, answers: S.answers }).then(r => { if (r && r.closed) serverClosed(r); }).catch(() => {});
+  const left = max - S.focusV;
+  showModal(left === 1 ? '⛔ FINAL WARNING' : '⚠ Warning',
+    `<p><b>${esc(reason)}.</b></p><p>This has been recorded with a photo and reported to your teacher.</p>
+     <p>${left === 1 ? '<b>If you leave the exam window again, your exam will be submitted automatically.</b>' : 'You have ' + (left - 1) + ' more warning(s) before automatic submission.'}</p>`,
+    [{ label: 'Return to exam', fn: () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); } }], 'bad');
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (S.running && !S.unloading && document.hidden) violation('Exam tab was hidden – window minimised or switched to another tab/app');
+});
+window.addEventListener('blur', () => {
+  if (!S.running || S.unloading) return;
+  clearTimeout(S.blurT); clearTimeout(S.blurT2);
+  S.blurT = setTimeout(() => {
+    if (!S.running || S.unloading || document.hasFocus()) return;
+    S.blurPhoto = capture('focus-lost'); S.blurPending = true;
+    S.blurT2 = setTimeout(() => {
+      S.blurPending = false;
+      if (S.running && !S.unloading && !document.hasFocus()) violation('The exam window lost focus – another window, app or pop-up came in front');
+    }, MON.BLUR_STRIKE_MS - MON.BLUR_GRACE_MS);
+  }, MON.BLUR_GRACE_MS);
+});
+window.addEventListener('focus', () => {
+  if (!S.running || !S.blurPending) return;
+  clearTimeout(S.blurT2); S.blurPending = false;
+  S.briefN = (S.briefN || 0) + 1;
+  if (S.briefN >= MON.BRIEF_LIMIT) { S.briefN = 0; violation('The exam window lost focus briefly ' + MON.BRIEF_LIMIT + ' times'); return; }
+  api('event', { examId: S.exam.examId, roll: S.roll, name: S.name, kind: 'brief_blur', detail: 'Window lost focus briefly (returned within ' + (MON.BLUR_STRIKE_MS / 1000) + ' s)', photo: S.blurPhoto }).catch(() => {});
+  toast('Stay on the exam window – leaving it, even briefly, is recorded', 3500);
+});
+document.addEventListener('fullscreenchange', () => {
+  if (!S.running) return;
+  setTimeout(() => { if (S.running) { if (!trueFs()) startFsGrace(); else endFsGrace(); } }, 400);
+});
+function startFsGrace() {
+  const sameIncident = Date.now() - S.lastViolationAt < 5000;
+  let left = MON.FS_GRACE_SEC;
+  $('fsCount').textContent = sameIncident ? '' : left;
+  $('fsMsg').textContent = sameIncident ? 'Return to full screen to continue the exam.'
+    : 'Return to full screen within the time below, otherwise this will be recorded as a violation.';
+  $('fsOverlay').classList.remove('hidden');
+  clearInterval(S.fsT);
+  if (sameIncident) return;
+  S.fsT = setInterval(() => {
+    if (!S.running || trueFs()) { endFsGrace(); return; }
+    if (document.hidden || !document.hasFocus() || S.modalOpen) return;   // focus loss is handled separately
+    left--; $('fsCount').textContent = Math.max(left, 0);
+    if (left <= 0) {
+      clearInterval(S.fsT);
+      if (Date.now() - S.lastViolationAt > 5000) violation('Exited full-screen mode and did not return');
+      $('fsCount').textContent = ''; $('fsMsg').textContent = 'Return to full screen to continue the exam.';
+    }
+  }, 1000);
+}
+/* Real full screen = the page owns the whole monitor, not just its own panel */
+function trueFs() {
+  if (!document.fullscreenElement) return false;
+  const w = Math.max(window.outerWidth || 0, document.documentElement.clientWidth);
+  const h = Math.max(window.outerHeight || 0, document.documentElement.clientHeight);
+  // tolerant: notches, taskbars, display scaling and zoom can shave off some pixels
+  return w >= screen.width * 0.85 && h >= screen.height * 0.80;
+}
+function fsSizes() { return `window ${window.outerWidth}×${window.outerHeight}, screen ${screen.width}×${screen.height}`; }
+function endFsGrace() { clearInterval(S.fsT); $('fsOverlay').classList.add('hidden'); }
+
+window.addEventListener('beforeunload', e => {
+  if (!S.running) return;
+  S.unloading = true; saveLocal(); beaconSave();
+  setTimeout(() => { S.unloading = false; }, 1500);   // if the student cancels "Leave site?"
+  e.preventDefault(); e.returnValue = '';
+});
+window.addEventListener('pagehide', () => { if (S.running) { S.unloading = true; saveLocal(); beaconSave(); } });
+
+document.addEventListener('keydown', e => {
+  const k = (e.key || '').toLowerCase(), c = e.ctrlKey || e.metaKey;
+  const devtools = k === 'f12' || (c && e.shiftKey && ['i', 'j', 'c', 'k'].includes(k)) || (c && k === 'u');
+  const examKeys = S.running && (k === 'f5' || k === 'printscreen' || (c && ['c', 'v', 'x', 'a', 's', 'p', 'f', 'r', 'g', 'h', 'n', 't', 'w', 'o'].includes(k)) || (e.altKey && (k === 'arrowleft' || k === 'arrowright')));
+  if (devtools || examKeys) { e.preventDefault(); e.stopPropagation(); if (S.running) toast('That key is disabled during the exam'); }
+}, true);
+document.addEventListener('keyup', e => {
+  if (S.running && e.key === 'PrintScreen') {
+    try { navigator.clipboard.writeText(''); } catch (_) {}
+    sendEvent('printscreen', 'Print-Screen key pressed', true);
+    toast('Screenshots are not allowed – this has been recorded', 3000);
+  }
+});
+['contextmenu', 'copy', 'cut', 'paste', 'dragstart', 'drop', 'selectstart'].forEach(ev =>
+  document.addEventListener(ev, e => {
+    if (!S.running) return;
+    if (ev === 'selectstart' && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    e.preventDefault();
+  }, true));
+
+/* =====================================================================
+   PROCTORING: face / head-pose AI
+   ===================================================================== */
+function startDetectLoop() { if (!S.loopT) S.loopT = setInterval(detectTick, 200); }
+
+function pose(L) {
+  // 1 = nose tip, 234/454 = left/right face edge, 10 = forehead top, 152 = chin
+  const n = L[1], l = L[234], r = L[454], top = L[10], chin = L[152];
+  return { yaw: (n.x - l.x) / ((r.x - l.x) || 1e-6), pitch: (n.y - top.y) / ((chin.y - top.y) || 1e-6) };
+}
+
+const GAZE_TXT = {
+  noface: 'Your face is not visible to the camera',
+  multi: 'More than one person detected in the camera',
+  side: 'Looking sideways, away from the screen',
+  down: 'Looking down, away from the screen',
+  up: 'Looking up, away from the screen'
+};
+
+function detectTick() {
+  const v = $('cam');
+  if (!S.detector || v.readyState < 2 || !v.videoWidth) return;
+  let res; try { res = S.detector.detectForVideo(v, performance.now()); } catch (_) { return; }
+  const faces = res.faceLandmarks || [], t = performance.now() / 1000;
+  let state = 'ok', p = null;
+  if (!faces.length) state = 'noface';
+  else if (faces.length > 1) state = 'multi';
+  else {
+    p = pose(faces[0]);
+    if (S.baseline) {
+      const dy = p.yaw - S.baseline.yaw, dp = p.pitch - S.baseline.pitch;
+      if (Math.abs(dy) > MON.YAW_TOL) state = 'side';
+      else if (S.rules.checkDown !== false && dp > MON.DOWN_TOL) state = 'down';
+      else if (dp < -MON.UP_TOL) state = 'up';
+    }
+  }
+  S.faceState = state;
+
+  if (!S.running) {                      // system-check screen: calibrate + show status
+    if (p && state === 'ok') { S.calib.push(p); if (S.calib.length > 20) S.calib.shift(); }
+    else if (state !== 'ok') { S.calib = []; S.noFaceSince = S.noFaceSince || t; } 
+    if (state === 'ok') S.noFaceSince = 0;
+    if (state === 'noface' && S.noFaceSince && t - S.noFaceSince > 10) checkErr('Your face is not being detected. Increase the light in front of you, move closer and face the camera.');
+    else if (state === 'ok') checkErr('');
+    if (S.aiState === 'ok' && $('scr-check').classList.contains('active')) {
+      setCheck('chkFace', state === 'ok' ? (S.calib.length >= 8 ? 'ok' : 'wait') : 'bad',
+        state === 'ok' ? (S.calib.length >= 8 ? 'Face detected and calibrated' : 'Hold still, calibrating…')
+          : state === 'multi' ? 'More than one face – only you should be visible' : 'No face detected – sit in front of the camera');
+      updateStartBtn();
+    }
+    return;
+  }
+
+  const dot = $('monDot');
+  dot.className = state === 'ok' ? '' : 'alert';
+  $('monText').textContent = state === 'ok' ? 'Monitoring' : 'Look at the screen';
+  if (S.submitting || S.modalOpen) { S.awayState = null; return; }
+  if (state === 'ok') { S.awayState = null; return; }
+  if (S.awayState !== state) { S.awayState = state; S.awaySince = t; return; }
+  const need = state === 'noface' ? MON.NOFACE_SEC : state === 'multi' ? MON.MULTI_SEC : state === 'down' ? MON.DOWN_SEC : MON.AWAY_SEC;
+  if (t - S.awaySince >= need && t - S.lastGazeAt >= MON.COOLDOWN_SEC) {
+    S.lastGazeAt = t; S.awaySince = t; gazeWarning(state);
+  }
+}
+
+function gazeWarning(state) {
+  if (state === 'down') {                     // rough work is allowed: log a photo, never count it
+    sendEvent('look_down', GAZE_TXT.down + ' for a long time', true);
+    toast('Photo taken: looking down for a long time. Keep your rough work brief and look back at the screen.', 4000);
+    return;
+  }
+  S.gazeW++; saveLocal(); updateChips();
+  const max = Number(S.rules.maxGaze) || 0, detail = GAZE_TXT[state];
+  if (max > 0 && S.gazeW >= max) { finish('Auto-submitted: ' + detail + ' (gaze warning ' + S.gazeW + ' of ' + max + ')', capture('gaze-final')); return; }
+  sendEvent('gaze', detail + ' (warning ' + S.gazeW + ')', true, { count: S.gazeW });
+  showModal('⚠ Proctoring warning',
+    `<p><b>${esc(detail)}.</b></p><p>A photo has been captured and sent to your teacher.</p>
+     <p>${max ? 'Look-away warnings left before automatic submission: <b>' + Math.max(0, max - S.gazeW) + '</b>' : 'Look-away warnings so far: <b>' + S.gazeW + '</b>'}.</p>
+     <p>Keep your face centred and look at the screen.</p>`,
+    [{ label: 'I understand' }], 'warn');
+}
+
+/* =====================================================================
+   SCIENTIFIC CALCULATOR (own safe parser – no eval)
+   ===================================================================== */
+const CALC = { deg: false, ans: 0, mem: 0, hist: [], last: null };
+function calcEval(src) {
+  const s = String(src).replace(/\s+/g, '').replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/π/g, 'pi').replace(/√/g, 'sqrt');
+  let i = 0;
+  const toRad = x => CALC.deg ? x * Math.PI / 180 : x, fromRad = x => CALC.deg ? x * 180 / Math.PI : x;
+  const fact = n => { if (n < 0 || n > 170 || Math.abs(n - Math.round(n)) > 1e-9) throw new Error('n! needs a whole number from 0 to 170'); let r = 1; for (let k = 2; k <= Math.round(n); k++) r *= k; return r; };
+  const F = {
+    sin: x => Math.sin(toRad(x)), cos: x => Math.cos(toRad(x)), tan: x => Math.tan(toRad(x)),
+    asin: x => fromRad(Math.asin(x)), acos: x => fromRad(Math.acos(x)), atan: x => fromRad(Math.atan(x)),
+    sinh: x => Math.sinh(x), cosh: x => Math.cosh(x), tanh: x => Math.tanh(x),
+    asinh: x => Math.asinh(x), acosh: x => Math.acosh(x), atanh: x => Math.atanh(x),
+    ln: x => Math.log(x), log: x => Math.log10(x), log10: x => Math.log10(x), log2: x => Math.log2(x),
+    exp: x => Math.exp(x), sqrt: x => Math.sqrt(x), cbrt: x => Math.cbrt(x), abs: x => Math.abs(x),
+    root: (n, x) => (x < 0 && Math.abs(Math.round(n) % 2) === 1) ? -Math.pow(-x, 1 / n) : Math.pow(x, 1 / n),
+    logb: (b, x) => Math.log(x) / Math.log(b), fact: n => fact(n)
+  };
+  const bad = m => { throw new Error(m || 'Check the expression'); };
+  const startsFactor = c => !!c && /[0-9.(a-z]/i.test(c);
+  const num = () => { const m = /^(\d+\.?\d*|\.\d+)(e[-+]?\d+)?/i.exec(s.slice(i)); if (!m) bad(); i += m[0].length; return parseFloat(m[0]); };
+  const prim = () => {
+    if (s[i] === '(') { i++; const v = expr(); if (s[i] === ')') i++; return v; }      // a missing ')' at the very end is forgiven
+    const m = /^[a-z][a-z0-9]*/i.exec(s.slice(i));
+    if (m) {
+      const n = m[0].toLowerCase(); i += m[0].length;
+      if (n === 'pi') return Math.PI; if (n === 'e') return Math.E; if (n === 'ans') return CALC.ans; if (n === 'm') return CALC.mem;
+      if (!F[n]) bad('Unknown function "' + n + '"');
+      if (s[i] !== '(') bad(n + ' needs brackets, e.g. ' + n + '(…)'); i++;
+      const args = [expr()]; while (s[i] === ',') { i++; args.push(expr()); }
+      if (s[i] === ')') i++;
+      if (args.length !== F[n].length) bad(n + ' takes ' + F[n].length + ' value' + (F[n].length > 1 ? 's, e.g. ' + n + '(3, 27)' : ''));
+      return F[n].apply(null, args);
+    }
+    return num();
+  };
+  const post = () => { let v = prim(); for (;;) { if (s[i] === '!') { i++; v = fact(v); } else if (s[i] === '%') { i++; v = v / 100; } else break; } return v; };
+  const pow = () => { const b = post(); if (s[i] === '^') { i++; return Math.pow(b, unary()); } return b; };
+  const unary = () => s[i] === '-' ? (i++, -unary()) : s[i] === '+' ? (i++, unary()) : pow();
+  const term = () => {
+    let v = unary();
+    for (;;) {
+      if (s[i] === '*' || s[i] === '/') { const o = s[i++]; const r = unary(); v = o === '*' ? v * r : v / r; }
+      else if (startsFactor(s[i])) v = v * unary();                    // implicit multiplication: 2π, 3(4+1), 2sin(30)
+      else return v;
+    }
+  };
+  const expr = () => { let v = term(); while (s[i] === '+' || s[i] === '-') { const o = s[i++]; const r = term(); v = o === '+' ? v + r : v - r; } return v; };
+  if (!s) bad('Type an expression');
+  const v = expr();
+  if (i !== s.length) bad('Check the expression near "' + s.slice(i, i + 6) + '"');
+  if (!isFinite(v)) bad(isNaN(v) ? 'Not a real number (e.g. √ of a negative number)' : 'Result too large, or division by zero');
+  return v;
+}
+const fmtNum = v => (v === 0 || (Math.abs(v) >= 1e-6 && Math.abs(v) < 1e12)) ? String(+v.toPrecision(12)) : v.toExponential(8).replace('e+', 'e');
+function calcShowMem() { $('calcMem').textContent = CALC.mem ? 'M = ' + fmtNum(CALC.mem) : ''; }
+function calcRun() {
+  const src = $('calcIn').value; if (!src.trim()) return;
+  try {
+    const v = calcEval(src); CALC.ans = v; CALC.last = v;
+    $('calcRes').className = ''; $('calcRes').textContent = '= ' + fmtNum(v);
+    CALC.hist.unshift({ src, v }); CALC.hist = CALC.hist.slice(0, 12);
+    $('calcHist').innerHTML = CALC.hist.map((h, k) => `<div data-h="${k}" title="Tap to reuse">${esc(h.src)} = <b>${esc(fmtNum(h.v))}</b></div>`).join('');
+  } catch (e) { $('calcRes').className = 'err'; $('calcRes').textContent = e.message || 'Error'; }
+}
+function calcInsert(t) {
+  const el = $('calcIn'), a = el.selectionStart ?? el.value.length, b = el.selectionEnd ?? el.value.length;
+  el.value = el.value.slice(0, a) + t + el.value.slice(b); const p = a + t.length; el.focus(); el.setSelectionRange(p, p);
+}
+function openCalc() { $('calcWin').classList.remove('hidden'); $('btnCalc').textContent = '🧮 Close calculator'; $('calcIn').focus(); }
+function closeCalc() { $('calcWin').classList.add('hidden'); $('btnCalc').textContent = '🧮 Open calculator'; }
+$('btnCalc').onclick = () => $('calcWin').classList.contains('hidden') ? openCalc() : closeCalc();
+$('calcClose').onclick = closeCalc;
+$('calcMode').onclick = () => { CALC.deg = !CALC.deg; $('calcMode').textContent = CALC.deg ? 'DEG' : 'RAD'; if ($('calcIn').value.trim()) calcRun(); };
+$('calcIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calcRun(); } });
+$('calcPad').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const a = b.dataset.a, el = $('calcIn');
+  if (b.dataset.k !== undefined) return calcInsert(b.dataset.k);
+  if (a === 'EQ') return calcRun();
+  if (a === 'AC') { el.value = ''; $('calcRes').textContent = ''; el.focus(); return; }
+  if (a === 'DEL') { const p = el.selectionStart ?? el.value.length; if (p > 0) { el.value = el.value.slice(0, p - 1) + el.value.slice(p); el.setSelectionRange(p - 1, p - 1); } el.focus(); return; }
+  if (a === 'MC') { CALC.mem = 0; calcShowMem(); return; }
+  if (a === 'M+' || a === 'M-') {
+    if (el.value.trim()) calcRun();
+    if (CALC.last === null) return toast('Calculate something first');
+    CALC.mem += (a === 'M+' ? 1 : -1) * CALC.last; calcShowMem(); toast('Memory = ' + fmtNum(CALC.mem));
+  }
+});
+$('calcHist').addEventListener('click', e => { const d = e.target.closest('[data-h]'); if (d) { const h = CALC.hist[+d.dataset.h]; $('calcIn').value = h.src; $('calcIn').focus(); } });
+$('calcUse').onclick = () => {
+  const q = S.exam && S.exam.questions[S.idx];
+  if (!q || q.type !== 'numeric') return toast('Open a numerical question first');
+  if (CALC.last === null) return toast('Calculate something first');
+  const inp = document.querySelector('#qAns input.num');
+  if (inp) { inp.value = fmtNum(CALC.last); inp.oninput(); toast('Result placed in the answer box – round it as the question asks'); }
+};
+(function dragCalc() {                                   // move the window by its title bar
+  const w = $('calcWin'), h = $('calcHead'); let sx, sy, ox, oy, on = false;
+  h.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; on = true; sx = e.clientX; sy = e.clientY; const r = w.getBoundingClientRect(); ox = r.left; oy = r.top; try { h.setPointerCapture(e.pointerId); } catch (_) {} });
+  h.addEventListener('pointermove', e => { if (!on) return; const x = Math.min(Math.max(0, ox + e.clientX - sx), innerWidth - w.offsetWidth), y = Math.min(Math.max(0, oy + e.clientY - sy), Math.max(0, innerHeight - w.offsetHeight)); w.style.left = x + 'px'; w.style.top = y + 'px'; w.style.right = 'auto'; });
+  h.addEventListener('pointerup', () => { on = false; });
+})();
+
+/* ===================================================================== */
+initLogin();
+</script>
+</body>
+</html>
