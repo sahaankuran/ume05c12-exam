@@ -423,7 +423,7 @@ table.log td,table.log th{border-bottom:1px solid var(--line);padding:5px 6px;te
    CONFIGURATION – edit these lines
    ===================================================================== */
 const BACKEND_URL = (() => {   // paste the web-app URL here, OR share the page link with ?b=<web-app URL> (admin.html builds it)
-  const fixed = String(window.EXAM_BACKEND_URL || 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE').trim();   // config.js (next to this page) can set it
+  const fixed = String(window.EXAM_BACKEND_URL || 'https://script.google.com/macros/s/AKfycbybaL4aPEeoPYXmrk-dRktmv9ATcS7UKhCaKvJioR-frcydjmod5pm4W3tyfmxIAbS7dg/exec').trim();   // config.js (next to this page) can set it
   if (/^https:\/\/script\.google/.test(fixed)) return fixed;
   const b = new URLSearchParams(location.search).get('b') || '';
   return /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(b) ? b : fixed;
@@ -537,7 +537,9 @@ async function api(action, data) {
     try {
       const r = await fetch(BACKEND_URL, { method: 'POST', body });   // text/plain → no CORS preflight
       const j = await r.json();
-      if (j && j.busy && i < 4) { await sleep(1500 * (i + 1) + Math.random() * 1000); continue; }   // server queue full: wait, retry
+      // a reply that is not a real answer to this request (e.g. the POST was turned into a GET on the way) is never accepted
+      if (!j || typeof j !== 'object' || typeof j.ok !== 'boolean' || j.service || j.retry) throw new Error('Unexpected reply from the server');
+      if (j.busy && i < 4) { await sleep(1500 * (i + 1) + Math.random() * 1000); continue; }   // server queue full: wait, retry
       return j;
     } catch (e) { lastErr = e; await sleep(1000 * (i + 1)); }
   }
@@ -857,6 +859,7 @@ async function onStart() {
   try { const a = JSON.parse(localStorage.getItem('pexam_active') || 'null'); if (a && a.roll === S.roll && a.lsKey) localAnswers = (JSON.parse(localStorage.getItem(a.lsKey) || 'null') || {}).answers || null; } catch (_) {}
   try { res = await api('start', { roll: S.roll, name: S.name, code: S.code, ua: navigator.userAgent, idToken: S.idToken, localAnswers, resumeKey, nonce: S.startNonce }); }
   catch (e) { res = { ok: false, error: 'Cannot reach the exam server. Check your internet connection and try again.' }; }
+  if (res && res.busy) res.error = 'Many students are starting at this moment. Wait 10 seconds and press Start again – you lose no exam time, your timer starts only when the exam opens.';
 
   if (!res.ok && res.needLogin) {
     exitFs(); S.starting = false; btn.textContent = 'Start exam in full screen'; updateStartBtn();
