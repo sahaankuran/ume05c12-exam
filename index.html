@@ -110,29 +110,94 @@ textarea.txt{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--l
 #saveState{font-size:12px;color:var(--muted)}
 .numerr{color:var(--bad);font-size:13px;font-weight:600;margin-top:6px}
 .unit{font-weight:600;color:var(--brand);margin-left:10px}
-#calcWin{position:fixed;top:70px;right:22px;width:340px;max-width:calc(100vw - 20px);max-height:calc(100vh - 16px);overflow:auto;z-index:85;background:#1d2733;color:#eef2f7;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.35);user-select:none}
-#calcWin .ch{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;cursor:move;border-bottom:1px solid #2f3b49;touch-action:none}
-#calcWin .ch b{flex:1;font-size:14px}
-#calcWin .ch button{background:#2f3b49;color:#fff;border:0;border-radius:6px;padding:3px 9px;font-size:12.5px}
-#calcWin .ch .x{background:#b42318;font-size:15px;padding:2px 10px}
-#calcWin .disp{padding:10px 12px 4px}
-#calcIn{width:100%;background:#0f1620;color:#fff;border:1px solid #3a4757;border-radius:8px;padding:8px 10px;font:500 16px ui-monospace,Consolas,monospace;user-select:text}
-#calcRes{font:700 22px ui-monospace,Consolas,monospace;text-align:right;min-height:30px;margin:6px 2px 0;word-break:break-all;color:#9fd3ff}
-#calcRes.err{color:#ff9b8f;font-size:14px;font-weight:600}
-#calcMem{font-size:11px;color:#ffcf6b;min-height:14px;margin:0 2px}
-#calcWin .pad{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:8px 12px}
-#calcWin .pad button{border:0;border-radius:7px;padding:7px 0;font-size:13px;background:#2f3b49;color:#eef2f7}
-#calcWin .pad button:hover{filter:brightness(1.2)}
-#calcWin .pad button.n{background:#46576b;font-size:15px;font-weight:600}
-#calcWin .pad button.o{background:#2d6aa3;font-size:15px}
-#calcWin .pad button.eq{background:#18794e;font-size:16px;font-weight:700}
-#calcWin .pad button.c{background:#8a3b33}
-#calcWin .pad button.m{background:#5b4a1f;color:#ffdf9e}
-#calcWin .foot{padding:0 12px 12px;display:flex;flex-direction:column;gap:6px}
-#calcWin .foot .use{background:#d99a1b;color:#1b1b1b;border:0;border-radius:8px;padding:8px;font-weight:700}
-#calcHist{max-height:84px;overflow:auto;font:12px ui-monospace,Consolas,monospace;color:#b7c3d0}
-#calcHist div{padding:2px 4px;border-radius:4px;cursor:pointer}
-#calcHist div:hover{background:#2f3b49}
+#calcWin,#calcWin *{box-sizing:border-box}
+#calcWin{position:fixed;top:58px;right:18px;width:372px;max-width:calc(100vw - 16px);max-height:calc(100vh - 12px);overflow:auto;z-index:85;background:linear-gradient(#2b3440,#1f262f);color:#eef2f7;border-radius:16px;box-shadow:0 20px 55px rgba(0,0,0,.42);user-select:none;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#calcWin.hidden{display:none}
+#calcWin .ch{display:flex;align-items:center;gap:6px;padding:8px 10px 6px 14px;cursor:move;touch-action:none}
+#calcWin .ch b{flex:1;font-size:13.5px;letter-spacing:.3px;color:#cfd8e3}
+#calcWin .chip{background:#3a4552;color:#fff;border:0;border-radius:6px;padding:3px 8px;font-size:11.5px;font-weight:700;cursor:pointer}
+#calcWin .chip:hover{background:#4a5768}
+#calcWin .x{background:#b42318;color:#fff;border:0;border-radius:6px;font-size:14px;padding:2px 9px;cursor:pointer}
+/* LCD */
+#cxLcd{margin:2px 12px 8px;background:linear-gradient(#cfdcc8,#bfcdb7);color:#18210f;border-radius:9px;padding:6px 10px 8px;box-shadow:inset 0 2px 5px rgba(0,0,0,.35);position:relative}
+#cxInd{display:flex;gap:8px;font:700 10px ui-monospace,Consolas,monospace;min-height:13px;color:#2c3a20;opacity:.95}
+#cxInd span{opacity:.18}#cxInd span.on{opacity:1}
+#cxInd .sp{flex:1}
+#cxIn{width:100%;background:transparent;border:0;outline:0;color:#111a08;font:500 17px/1.35 ui-monospace,Consolas,"Cascadia Mono",monospace;padding:2px 0;user-select:text;caret-color:#000}
+#cxIn::placeholder{color:#5c6b51;font-size:13px}
+#cxPrev{font:13px ui-monospace,Consolas,monospace;color:#4d5c42;text-align:right;min-height:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cxOut{font:700 25px/1.2 ui-monospace,Consolas,"Cascadia Mono",monospace;text-align:right;min-height:31px;word-break:break-all;color:#0d1405}
+#cxOut.err{font-size:14px;font-weight:700;color:#7a1508;line-height:1.35}
+#cxOut small{font-size:13px;font-weight:600;display:block;color:#33421f}
+/* prompt bar (STO/RCL/SOLVE/CALC) */
+#cxBar{margin:0 12px 8px;background:#11171e;border:1px solid #3f4b59;border-radius:9px;padding:7px 9px;font-size:12.5px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+#cxBar.hidden{display:none}
+#cxBar .lbl{width:100%;color:#ffd479;font-weight:600;margin-bottom:2px}
+#cxBar button{background:#3a4552;color:#fff;border:0;border-radius:6px;padding:5px 9px;font:700 12.5px ui-monospace,Consolas,monospace;cursor:pointer;min-width:34px}
+#cxBar button.go{background:#1d6fc2}
+#cxBar input{flex:1;min-width:90px;background:#0b1015;color:#fff;border:1px solid #475565;border-radius:6px;padding:5px 7px;font:14px ui-monospace,Consolas,monospace;user-select:text}
+/* keys */
+#cxKeys{padding:0 12px 6px}
+#cxKeys .fn,#cxKeys .num{display:grid;gap:5px;margin-bottom:5px}
+#cxKeys .fn{grid-template-columns:repeat(6,1fr)}
+#cxKeys .num{grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+#cxKeys button{position:relative;border:0;border-radius:8px;background:#3d4754;color:#f3f6fa;font:600 12.5px system-ui,-apple-system,"Segoe UI",sans-serif;padding:13px 0 4px;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.35);line-height:1}
+#cxKeys button:active{transform:translateY(1px);box-shadow:none}
+#cxKeys button:hover{filter:brightness(1.15)}
+#cxKeys button .s{position:absolute;top:3px;left:0;right:0;font-size:9px;font-weight:700;color:#f4c048;letter-spacing:.2px;white-space:nowrap}
+#cxKeys button .s.h{color:#8fd0ff}
+#cxKeys .num button{background:#dfe4ea;color:#17202b;font-size:17px;font-weight:700;padding:10px 0 7px}
+#cxKeys .num button .s{color:#9a6a00}
+#cxKeys button.op{background:#c9d2dc}
+#cxKeys button.del{background:#e8833a;color:#fff}
+#cxKeys button.ac{background:#d4502f;color:#fff}
+#cxKeys button.eq{background:#1d6fc2;color:#fff}
+#cxKeys button.sh{background:#c99712;color:#1b1406;font-weight:800}
+#cxKeys button.hy{background:#2f6d9a;color:#fff}
+#cxKeys button.mode{background:#556273}
+#calcWin.shift #cxKeys button.sh,#calcWin.hyp #cxKeys button.hy{outline:2px solid #fff;outline-offset:-2px}
+#calcWin.shift #cxKeys button .s{color:#ffd76e;text-shadow:0 0 6px rgba(255,200,60,.6)}
+#calcWin.shift #cxKeys .num button .s{color:#b07900;text-shadow:none}
+/* EQN panel */
+#cxEqn{padding:0 12px 8px}
+#cxEqn.hidden{display:none}
+#cxEqn .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px}
+#cxEqn .tabs button{background:#3a4552;color:#dfe6ee;border:0;border-radius:7px;padding:7px 2px;font-size:11.5px;font-weight:700;cursor:pointer}
+#cxEqn .tabs button.on{background:#1d6fc2;color:#fff}
+#cxEqn .form{font:13px ui-monospace,Consolas,monospace;color:#cfd8e3}
+#cxEqn .form .eqtxt{color:#ffd479;margin-bottom:6px;font-size:12.5px}
+#cxEqn .grid{display:grid;gap:5px;align-items:center}
+#cxEqn .grid label{font-size:11.5px;color:#9fb0c2;text-align:center}
+#cxEqn .grid input{width:100%;background:#0b1015;color:#fff;border:1px solid #475565;border-radius:6px;padding:6px 5px;font:14px ui-monospace,Consolas,monospace;text-align:center;user-select:text;min-width:0}
+#cxEqn .acts{display:flex;gap:6px;margin-top:8px}
+#cxEqn .acts button{flex:1;border:0;border-radius:8px;padding:8px;font-weight:700;cursor:pointer;background:#3a4552;color:#fff}
+#cxEqn .acts button.go{background:#1d6fc2}
+#cxEqnRes{margin-top:8px;font:14px ui-monospace,Consolas,monospace}
+#cxEqnRes .r{display:flex;align-items:center;gap:6px;background:#11171e;border:1px solid #33404e;border-radius:7px;padding:5px 8px;margin-bottom:4px}
+#cxEqnRes .r b{color:#ffd479;min-width:34px}
+#cxEqnRes .r span{flex:1;word-break:break-all}
+#cxEqnRes .r button{background:#2d6aa3;border:0;color:#fff;border-radius:5px;font-size:11px;padding:3px 7px;cursor:pointer}
+#cxEqnRes .err{color:#ff9b8f;font-size:12.5px}
+/* footer: answer box + history */
+#calcWin .foot{padding:2px 12px 12px;display:flex;flex-direction:column;gap:6px}
+#calcWin .foot .use{background:#d99a1b;color:#1b1b1b;border:0;border-radius:8px;padding:8px;font-weight:800;cursor:pointer;font-size:13px}
+#cxHistHead{display:flex;justify-content:space-between;font-size:11px;color:#8d9bab;margin-top:2px}
+#cxHistHead button{background:none;border:0;color:#8d9bab;cursor:pointer;font-size:11px;text-decoration:underline}
+#cxHist{max-height:74px;overflow:auto;font:12px ui-monospace,Consolas,monospace;color:#b7c3d0;background:#161c23;border-radius:7px}
+#cxHist:empty::before{content:'Your calculations appear here – tap one to reuse it';display:block;padding:7px;color:#6d7a89;font-family:system-ui,sans-serif;font-size:11.5px}
+#cxHist div{display:flex;gap:6px;padding:4px 7px;border-bottom:1px solid #222a33}
+#cxHist div span{flex:1;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cxHist div span:hover{color:#fff}
+#cxHist div b{cursor:pointer;color:#9fd3ff;white-space:nowrap}
+#cxHist div b:hover{text-decoration:underline}
+/* format popover */
+#cxFmt{position:absolute;top:36px;right:44px;background:#11171e;border:1px solid #475565;border-radius:9px;padding:8px;z-index:2;box-shadow:0 10px 30px rgba(0,0,0,.4);width:210px;font-size:12px}
+#cxFmt.hidden{display:none}
+#cxFmt .row{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}
+#cxFmt button{flex:1;background:#3a4552;color:#fff;border:0;border-radius:6px;padding:6px 4px;font-weight:700;font-size:11.5px;cursor:pointer}
+#cxFmt button.on{background:#1d6fc2}
+#cxFmt .t{color:#9fb0c2;margin:2px 0 4px}
+@media (max-height:740px){#calcWin{top:6px}#cxKeys button{padding:12px 0 3px}#cxKeys .num button{padding:8px 0 5px}#cxHist{max-height:50px}}
 .pbadge{position:fixed;bottom:10px;left:10px;background:#5b6676;color:#fff;font-size:12px;padding:4px 6px 4px 12px;border-radius:20px;z-index:60;display:flex;gap:8px;align-items:center}
 .pbadge button{background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:50%;width:20px;height:20px;line-height:18px;padding:0}
 #timeBanner{background:#fff3dc;color:#8a5200;font-weight:600;text-align:center;padding:6px 10px;font-size:14px}
@@ -320,26 +385,33 @@ table.log td,table.log th{border-bottom:1px solid var(--line);padding:5px 6px;te
 <div id="toast"></div>
 <div id="calcWin" class="hidden" role="dialog" aria-label="Scientific calculator">
   <div class="ch" id="calcHead"><b>🧮 Scientific calculator</b>
-    <button id="calcMode" title="Angle unit for sin, cos, tan (click to switch)">RAD</button>
+    <button class="chip" id="cxAng" title="Angle unit: click to switch DEG → RAD → GRA">DEG</button>
+    <button class="chip" id="cxFmtBtn" title="Display format: Norm / Fix / Sci / Eng">Norm</button>
     <button class="x" id="calcClose" title="Close calculator">✕</button></div>
-  <div class="disp">
-    <input id="calcIn" autocomplete="off" spellcheck="false" placeholder="Type or tap, e.g. sqrt(800/2)/(2π)">
-    <div id="calcRes"></div><div id="calcMem"></div>
+  <div id="cxFmt" class="hidden">
+    <div class="t">Display format</div>
+    <div class="row" id="cxFmtModes"><button data-m="Norm">Norm</button><button data-m="Fix">Fix</button><button data-m="Sci">Sci</button><button data-m="Eng">Eng</button></div>
+    <div class="t" id="cxFmtDT">Decimal places (Fix)</div>
+    <div class="row" id="cxFmtDigits"></div>
   </div>
-  <div class="pad" id="calcPad">
-    <button data-k="sin(">sin</button><button data-k="cos(">cos</button><button data-k="tan(">tan</button><button data-k="ln(">ln</button><button data-k="log(">log</button><button data-k="sqrt(">√</button>
-    <button data-k="asin(">sin⁻¹</button><button data-k="acos(">cos⁻¹</button><button data-k="atan(">tan⁻¹</button><button data-k="exp(">eˣ</button><button data-k="10^(">10ˣ</button><button data-k="cbrt(">∛</button>
-    <button data-k="sinh(">sinh</button><button data-k="cosh(">cosh</button><button data-k="tanh(">tanh</button><button data-k="^2">x²</button><button data-k="^3">x³</button><button data-k="^">xʸ</button>
-    <button data-k="root(" title="root(n, x) = n-th root of x">ʸ√x</button><button data-k="1/(">1/x</button><button data-k="abs(">|x|</button><button data-k="!">n!</button><button data-k="π">π</button><button data-k="e">e</button>
-    <button class="m" data-a="MC" title="Clear memory">MC</button><button class="m" data-k="M" title="Recall memory">MR</button><button class="m" data-a="M+" title="Add result to memory">M+</button><button class="m" data-a="M-" title="Subtract result from memory">M−</button><button data-k=",">,</button><button data-k="Ans">Ans</button>
-    <button class="n" data-k="7">7</button><button class="n" data-k="8">8</button><button class="n" data-k="9">9</button><button data-k="(">(</button><button data-k=")">)</button><button class="c" data-a="DEL">⌫</button>
-    <button class="n" data-k="4">4</button><button class="n" data-k="5">5</button><button class="n" data-k="6">6</button><button class="o" data-k="×">×</button><button class="o" data-k="÷">÷</button><button class="c" data-a="AC">AC</button>
-    <button class="n" data-k="1">1</button><button class="n" data-k="2">2</button><button class="n" data-k="3">3</button><button class="o" data-k="+">+</button><button class="o" data-k="−">−</button><button data-k="×10^(" title="Exponent: ×10ⁿ">EXP</button>
-    <button class="n" data-k="0">0</button><button class="n" data-k=".">.</button><button data-k="−" title="Negative sign">(−)</button><button data-k="%" title="Percent">%</button><button class="eq" data-a="EQ" style="grid-column:span 2">=</button>
+  <div id="cxLcd">
+    <div id="cxInd"><span id="iS">S</span><span id="iH">HYP</span><span id="iSTO">STO</span><span id="iRCL">RCL</span><span id="iM">M</span><span class="sp"></span><span class="on" id="iAng">D</span><span class="on" id="iFmt"></span></div>
+    <input id="cxIn" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none" placeholder="Type or tap, e.g. √(200000/50)÷(2π)">
+    <div id="cxPrev"></div>
+    <div id="cxOut">0</div>
+  </div>
+  <div id="cxBar" class="hidden"></div>
+  <div id="cxKeys"></div>
+  <div id="cxEqn" class="hidden">
+    <div class="tabs" id="cxEqnTabs"><button data-t="q2">aX²+bX+c</button><button data-t="q3">aX³+…+d</button><button data-t="l2">2 unknowns</button><button data-t="l3">3 unknowns</button></div>
+    <div class="form" id="cxEqnForm"></div>
+    <div class="acts"><button id="cxEqnBack">← Calculator</button><button class="go" id="cxEqnGo">Solve</button></div>
+    <div id="cxEqnRes"></div>
   </div>
   <div class="foot">
-    <button class="use" id="calcUse">↵ Put result in the answer box</button>
-    <div id="calcHist"></div>
+    <button class="use" id="calcUse" title="Copies the last result into the answer box of the current numerical question">↵ Put result in the answer box</button>
+    <div id="cxHistHead"><span>History (tap expression to edit · tap result to insert)</span><button id="cxHistClr">clear</button></div>
+    <div id="cxHist"></div>
   </div>
 </div>
 
@@ -1253,109 +1325,804 @@ function gazeWarning(state) {
 }
 
 /* =====================================================================
-   SCIENTIFIC CALCULATOR (own safe parser – no eval)
+   CALCULATOR ENGINE – safe parser (no eval), Casio-style behaviour
+   Exposes: CalcEngine.evaluate(src, state) → { value, text, extra }
+            CalcEngine.format(v, state)      → display string
+            CalcEngine.toFraction(v)         → "a/b" or null
+            CalcEngine.solve(src, guess, state)
+            CalcEngine.eqn.{poly2, poly3, lin2, lin3}
+   state = { angle:'DEG'|'RAD'|'GRA', vars:{A..F,X,Y,M}, ans, fmt:{mode:'Norm'|'Fix'|'Sci'|'Eng', digits} }
    ===================================================================== */
-const CALC = { deg: false, ans: 0, mem: 0, hist: [], last: null };
-function calcEval(src) {
-  const s = String(src).replace(/\s+/g, '').replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/π/g, 'pi').replace(/√/g, 'sqrt');
-  let i = 0;
-  const toRad = x => CALC.deg ? x * Math.PI / 180 : x, fromRad = x => CALC.deg ? x * 180 / Math.PI : x;
-  const fact = n => { if (n < 0 || n > 170 || Math.abs(n - Math.round(n)) > 1e-9) throw new Error('n! needs a whole number from 0 to 170'); let r = 1; for (let k = 2; k <= Math.round(n); k++) r *= k; return r; };
-  const F = {
-    sin: x => Math.sin(toRad(x)), cos: x => Math.cos(toRad(x)), tan: x => Math.tan(toRad(x)),
-    asin: x => fromRad(Math.asin(x)), acos: x => fromRad(Math.acos(x)), atan: x => fromRad(Math.atan(x)),
-    sinh: x => Math.sinh(x), cosh: x => Math.cosh(x), tanh: x => Math.tanh(x),
-    asinh: x => Math.asinh(x), acosh: x => Math.acosh(x), atanh: x => Math.atanh(x),
-    ln: x => Math.log(x), log: x => Math.log10(x), log10: x => Math.log10(x), log2: x => Math.log2(x),
-    exp: x => Math.exp(x), sqrt: x => Math.sqrt(x), cbrt: x => Math.cbrt(x), abs: x => Math.abs(x),
-    root: (n, x) => (x < 0 && Math.abs(Math.round(n) % 2) === 1) ? -Math.pow(-x, 1 / n) : Math.pow(x, 1 / n),
-    logb: (b, x) => Math.log(x) / Math.log(b), fact: n => fact(n)
+(function (root) {
+  'use strict';
+  class CalcError extends Error { constructor(kind, msg) { super(msg); this.kind = kind; } }
+  const syntax = m => { throw new CalcError('Syntax ERROR', m || 'Check the expression'); };
+  const math = m => { throw new CalcError('Math ERROR', m || 'The result is not a real number'); };
+
+  /* ---------------- tokenizer ---------------- */
+  const FUNCS = {
+    sin: 1, cos: 1, tan: 1, asin: 1, acos: 1, atan: 1,
+    sinh: 1, cosh: 1, tanh: 1, asinh: 1, acosh: 1, atanh: 1,
+    ln: 1, log: 1, log2: 1, logb: 2, exp: 1, sqrt: 1, cbrt: 1, root: 2, abs: 1,
+    nCr: 2, nPr: 2, mod: 2, floor: 1, ceil: 1, round: 2, int: 1, frac: 1, sign: 1,
+    gcd: 2, lcm: 2, min: 2, max: 2, ranint: 2, hypot: 2, atan2: 2,
+    Pol: 2, Rec: 2, deg: 1, rad: 1,
+    integ: 3, deriv: 2, sum: 3, prod: 3
   };
-  const bad = m => { throw new Error(m || 'Check the expression'); };
-  const startsFactor = c => !!c && /[0-9.(a-z]/i.test(c);
-  const num = () => { const m = /^(\d+\.?\d*|\.\d+)(e[-+]?\d+)?/i.exec(s.slice(i)); if (!m) bad(); i += m[0].length; return parseFloat(m[0]); };
-  const prim = () => {
-    if (s[i] === '(') { i++; const v = expr(); if (s[i] === ')') i++; return v; }      // a missing ')' at the very end is forgiven
-    const m = /^[a-z][a-z0-9]*/i.exec(s.slice(i));
-    if (m) {
-      const n = m[0].toLowerCase(); i += m[0].length;
-      if (n === 'pi') return Math.PI; if (n === 'e') return Math.E; if (n === 'ans') return CALC.ans; if (n === 'm') return CALC.mem;
-      if (!F[n]) bad('Unknown function "' + n + '"');
-      if (s[i] !== '(') bad(n + ' needs brackets, e.g. ' + n + '(…)'); i++;
-      const args = [expr()]; while (s[i] === ',') { i++; args.push(expr()); }
-      if (s[i] === ')') i++;
-      if (args.length !== F[n].length) bad(n + ' takes ' + F[n].length + ' value' + (F[n].length > 1 ? 's, e.g. ' + n + '(3, 27)' : ''));
-      return F[n].apply(null, args);
+  const LAZY = { integ: 1, deriv: 1, sum: 1, prod: 1 };       // first argument is a function of X
+  const ALIAS = { 'sin⁻¹': 'asin', 'cos⁻¹': 'acos', 'tan⁻¹': 'atan', 'sinh⁻¹': 'asinh', 'cosh⁻¹': 'acosh', 'tanh⁻¹': 'atanh',
+    arcsin: 'asin', arccos: 'acos', arctan: 'atan', '∫': 'integ', 'd/dx': 'deriv', 'Σ': 'sum', 'Π': 'prod', log10: 'log',
+    ncr: 'nCr', npr: 'nPr', pol: 'Pol', rec: 'Rec', RanInt: 'ranint', ranInt: 'ranint', Abs: 'abs', lg: 'log' };
+  const VARS = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'M'];
+
+  function tokenize(src) {
+    const s = String(src)
+      .replace(/[−–]/g, '-').replace(/[×·∙]/g, '*').replace(/÷/g, '/')
+      .replace(/\*\*/g, '^').replace(/ᴇ/g, 'ᴇ');
+    const t = []; let i = 0;
+    const push = (type, v) => t.push({ type, v, at: i });
+    while (i < s.length) {
+      const c = s[i];
+      if (/\s/.test(c)) { i++; continue; }
+      // numbers: 12  1.5  .5  2ᴇ-3 (ᴇ is the ×10ˣ key)  also 2e-3 typed directly
+      let m = /^(\d+\.?\d*|\.\d+)(?:(?:ᴇ|e(?=[-+]?\d))([-+]?\d+))?/.exec(s.slice(i));
+      if (m) { push('num', parseFloat(m[1] + (m[2] !== undefined ? 'e' + m[2] : ''))); i += m[0].length; continue; }
+      if (c === 'ᴇ') { // ᴇ without mantissa: 1ᴇn
+        const m2 = /^ᴇ([-+]?\d+)/.exec(s.slice(i)); if (!m2) syntax('×10ˣ needs a whole-number power, e.g. 2.5ᴇ-3');
+        push('num', parseFloat('1e' + m2[1])); i += m2[0].length; continue;
+      }
+      // multi-character symbols first
+      const sym = ['sin⁻¹', 'cos⁻¹', 'tan⁻¹', 'sinh⁻¹', 'cosh⁻¹', 'tanh⁻¹', 'd/dx', '⁻¹'].find(k => s.startsWith(k, i));
+      if (sym) { if (sym === '⁻¹') push('post', '⁻¹'); else push('id', ALIAS[sym]); i += sym.length; continue; }
+      m = /^[A-Za-z][A-Za-z0-9]*/.exec(s.slice(i));
+      if (m) {
+        const w = m[0], known = FUNCS[w] !== undefined || FUNCS[w.toLowerCase()] !== undefined || ALIAS[w] || ['pi', 'PI', 'e', 'Ans', 'ans', 'ANS', 'Ran', 'rand', 'x'].includes(w) || VARS.includes(w);
+        if (!known && /^[ABCDEFXYMxe]+$/.test(w)) { for (const ch of w) { push('id', ch); i++; } continue; }   // AB = A×B, 2Xe = 2×X×e
+        push('id', w); i += w.length; continue;
+      }
+      if ('+-*/^(),='.includes(c)) { push('op', c); i++; continue; }
+      if ('!%²³°'.includes(c)) { push('post', c); i++; continue; }
+      if (c === '√' || c === '∛') { push('pre', c); i++; continue; }
+      if (c === 'π') { push('id', 'pi'); i++; continue; }
+      if (c === '∫' || c === 'Σ' || c === 'Π') { push('id', ALIAS[c]); i++; continue; }
+      if (c === '|') { push('op', '|'); i++; continue; }
+      syntax('Unknown symbol "' + c + '"');
     }
-    return num();
-  };
-  const post = () => { let v = prim(); for (;;) { if (s[i] === '!') { i++; v = fact(v); } else if (s[i] === '%') { i++; v = v / 100; } else break; } return v; };
-  const pow = () => { const b = post(); if (s[i] === '^') { i++; return Math.pow(b, unary()); } return b; };
-  const unary = () => s[i] === '-' ? (i++, -unary()) : s[i] === '+' ? (i++, unary()) : pow();
-  const term = () => {
-    let v = unary();
-    for (;;) {
-      if (s[i] === '*' || s[i] === '/') { const o = s[i++]; const r = unary(); v = o === '*' ? v * r : v / r; }
-      else if (startsFactor(s[i])) v = v * unary();                    // implicit multiplication: 2π, 3(4+1), 2sin(30)
-      else return v;
-    }
-  };
-  const expr = () => { let v = term(); while (s[i] === '+' || s[i] === '-') { const o = s[i++]; const r = term(); v = o === '+' ? v + r : v - r; } return v; };
-  if (!s) bad('Type an expression');
-  const v = expr();
-  if (i !== s.length) bad('Check the expression near "' + s.slice(i, i + 6) + '"');
-  if (!isFinite(v)) bad(isNaN(v) ? 'Not a real number (e.g. √ of a negative number)' : 'Result too large, or division by zero');
-  return v;
-}
-const fmtNum = v => (v === 0 || (Math.abs(v) >= 1e-6 && Math.abs(v) < 1e12)) ? String(+v.toPrecision(12)) : v.toExponential(8).replace('e+', 'e');
-function calcShowMem() { $('calcMem').textContent = CALC.mem ? 'M = ' + fmtNum(CALC.mem) : ''; }
-function calcRun() {
-  const src = $('calcIn').value; if (!src.trim()) return;
-  try {
-    const v = calcEval(src); CALC.ans = v; CALC.last = v;
-    $('calcRes').className = ''; $('calcRes').textContent = '= ' + fmtNum(v);
-    CALC.hist.unshift({ src, v }); CALC.hist = CALC.hist.slice(0, 12);
-    $('calcHist').innerHTML = CALC.hist.map((h, k) => `<div data-h="${k}" title="Tap to reuse">${esc(h.src)} = <b>${esc(fmtNum(h.v))}</b></div>`).join('');
-  } catch (e) { $('calcRes').className = 'err'; $('calcRes').textContent = e.message || 'Error'; }
-}
-function calcInsert(t) {
-  const el = $('calcIn'), a = el.selectionStart ?? el.value.length, b = el.selectionEnd ?? el.value.length;
-  el.value = el.value.slice(0, a) + t + el.value.slice(b); const p = a + t.length; el.focus(); el.setSelectionRange(p, p);
-}
-function openCalc() { $('calcWin').classList.remove('hidden'); $('btnCalc').textContent = '🧮 Close calculator'; $('calcIn').focus(); }
-function closeCalc() { $('calcWin').classList.add('hidden'); $('btnCalc').textContent = '🧮 Open calculator'; }
-$('btnCalc').onclick = () => $('calcWin').classList.contains('hidden') ? openCalc() : closeCalc();
-$('calcClose').onclick = closeCalc;
-$('calcMode').onclick = () => { CALC.deg = !CALC.deg; $('calcMode').textContent = CALC.deg ? 'DEG' : 'RAD'; if ($('calcIn').value.trim()) calcRun(); };
-$('calcIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calcRun(); } });
-$('calcPad').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  const a = b.dataset.a, el = $('calcIn');
-  if (b.dataset.k !== undefined) return calcInsert(b.dataset.k);
-  if (a === 'EQ') return calcRun();
-  if (a === 'AC') { el.value = ''; $('calcRes').textContent = ''; el.focus(); return; }
-  if (a === 'DEL') { const p = el.selectionStart ?? el.value.length; if (p > 0) { el.value = el.value.slice(0, p - 1) + el.value.slice(p); el.setSelectionRange(p - 1, p - 1); } el.focus(); return; }
-  if (a === 'MC') { CALC.mem = 0; calcShowMem(); return; }
-  if (a === 'M+' || a === 'M-') {
-    if (el.value.trim()) calcRun();
-    if (CALC.last === null) return toast('Calculate something first');
-    CALC.mem += (a === 'M+' ? 1 : -1) * CALC.last; calcShowMem(); toast('Memory = ' + fmtNum(CALC.mem));
+    return t;
   }
-});
-$('calcHist').addEventListener('click', e => { const d = e.target.closest('[data-h]'); if (d) { const h = CALC.hist[+d.dataset.h]; $('calcIn').value = h.src; $('calcIn').focus(); } });
-$('calcUse').onclick = () => {
-  const q = S.exam && S.exam.questions[S.idx];
-  if (!q || q.type !== 'numeric') return toast('Open a numerical question first');
-  if (CALC.last === null) return toast('Calculate something first');
-  const inp = document.querySelector('#qAns input.num');
-  if (inp) { inp.value = fmtNum(CALC.last); inp.oninput(); toast('Result placed in the answer box – round it as the question asks'); }
+
+  /* ---------------- parser → AST ---------------- */
+  function parse(src, opts) {
+    const t = tokenize(src); let p = 0;
+    const allowEq = opts && opts.allowEq;
+    const peek = () => t[p], next = () => t[p++];
+    const isOp = (v) => t[p] && t[p].type === 'op' && t[p].v === v;
+    const startsFactor = tk => tk && (tk.type === 'num' || tk.type === 'id' || tk.type === 'pre' || (tk.type === 'op' && tk.v === '('));
+
+    function equation() {
+      const l = expr();
+      if (isOp('=')) { if (!allowEq) syntax('"=" is only used in SOLVE equations'); next(); const r = expr(); return { k: 'bin', o: '-', a: l, b: r }; }
+      return l;
+    }
+    function expr() {
+      let n = term();
+      while (isOp('+') || isOp('-')) { const o = next().v; n = { k: 'bin', o, a: n, b: term() }; }
+      return n;
+    }
+    function term() {
+      let n = unary();
+      for (;;) {
+        if (isOp('*') || isOp('/')) { const o = next().v; n = { k: 'bin', o, a: n, b: unary() }; }
+        else if (startsFactor(peek())) n = { k: 'bin', o: '*', a: n, b: unary(true) };      // implicit multiplication: 2π, 3(4+1), 2sin(30)
+        else return n;
+      }
+    }
+    function unary(implicit) {
+      if (!implicit && (isOp('-') || isOp('+'))) { const o = next().v; const u = unary(); return o === '-' ? { k: 'neg', a: u } : u; }
+      return power();
+    }
+    function power() {
+      const b = postfix();
+      if (isOp('^')) { next(); return { k: 'bin', o: '^', a: b, b: unary() }; }           // right-associative, -2^2 = -4, 2^-1 = 0.5
+      return b;
+    }
+    function postfix() {
+      let n = prefix();
+      while (peek() && peek().type === 'post') {
+        const o = next().v;
+        n = o === '²' ? { k: 'bin', o: '^', a: n, b: { k: 'num', v: 2 } }
+          : o === '³' ? { k: 'bin', o: '^', a: n, b: { k: 'num', v: 3 } }
+          : o === '⁻¹' ? { k: 'bin', o: '/', a: { k: 'num', v: 1 }, b: n }
+          : { k: 'post', o, a: n };
+      }
+      return n;
+    }
+    function prefix() {
+      if (peek() && peek().type === 'pre') {                                                   // √9×2 = 6, ∛-8 = -2
+        const o = next().v, f = o === '√' ? 'sqrt' : 'cbrt';
+        if (isOp('-')) { next(); return { k: 'call', f, args: [{ k: 'neg', a: postfix() }] }; }
+        return { k: 'call', f, args: [postfix()] };
+      }
+      return primary();
+    }
+    function primary() {
+      const tk = next();
+      if (!tk) syntax('The expression ends too early');
+      if (tk.type === 'num') return { k: 'num', v: tk.v };
+      if (tk.type === 'op' && tk.v === '(') { const n = equation(); if (isOp(')')) next(); else if (p < t.length) syntax('Missing ")"'); return n; }  // a missing ")" at the very end is forgiven
+      if (tk.type === 'op' && tk.v === '|') { const n = expr(); if (isOp('|')) next(); return { k: 'call', f: 'abs', args: [n] }; }
+      if (tk.type === 'id') {
+        let id = ALIAS[tk.v] || tk.v;
+        if (id === 'pi' || id === 'PI') return { k: 'num', v: Math.PI };
+        if (id === 'e') return { k: 'num', v: Math.E };
+        if (id === 'Ans' || id === 'ans' || id === 'ANS') return { k: 'var', n: 'Ans' };
+        if (id === 'Ran' || id === 'rand' || id === 'Ran#') return { k: 'rand' };
+        if (VARS.includes(id)) return { k: 'var', n: id };
+        if (id === 'x') return { k: 'var', n: 'X' };
+        if (FUNCS[id] === undefined) { const low = id.toLowerCase(); if (FUNCS[low] !== undefined) id = low; else syntax('Unknown name "' + tk.v + '"'); }
+        if (!isOp('(')) syntax(tk.v + ' needs brackets, e.g. ' + tk.v + '(…)');
+        next();
+        const args = [];
+        if (!isOp(')')) { args.push(equation()); while (isOp(',')) { next(); args.push(equation()); } }
+        if (isOp(')')) next(); else if (p < t.length) syntax('Missing ")"');
+        const need = FUNCS[id];
+        if (id === 'round' && args.length === 1) args.push({ k: 'num', v: 0 });
+        if (id === 'log' && args.length === 2) return { k: 'call', f: 'logb', args };           // log(base, x)
+        if ((id === 'deriv') && args.length === 3) { /* d/dx(f, a, h) – ignore h */ args.length = 2; }
+        if (args.length !== need) syntax(id + ' takes ' + need + ' value' + (need > 1 ? 's separated by commas' : ''));
+        return { k: 'call', f: id, args };
+      }
+      if (tk.type === 'op' && tk.v === ')') syntax('")" without a matching "("');
+      if (tk.type === 'post') syntax('"' + tk.v + '" needs a number before it, e.g. 2' + tk.v);
+      syntax('Check the expression near "' + (tk.v === undefined ? '' : tk.v) + '"');
+    }
+    if (!t.length) syntax('Type an expression');
+    const ast = equation();
+    if (p < t.length) {
+      const tk = t[p];
+      syntax(tk.type === 'op' && tk.v === ')' ? '")" without a matching "("' : tk.type === 'op' && tk.v === ',' ? 'A comma can only separate values inside a function, e.g. nCr(5, 2)' : 'Check the expression near "' + tk.v + '"');
+    }
+    return ast;
+  }
+
+  /* ---------------- evaluator ---------------- */
+  const angIn = (x, st) => st.angle === 'DEG' ? x * Math.PI / 180 : st.angle === 'GRA' ? x * Math.PI / 200 : x;
+  const angOut = (x, st) => st.angle === 'DEG' ? x * 180 / Math.PI : st.angle === 'GRA' ? x * 200 / Math.PI : x;
+  const clean = v => (Math.abs(v) < 1e-15 ? 0 : v);
+  const isInt = n => Math.abs(n - Math.round(n)) < 1e-9;
+  function fact(n) {
+    if (n < 0 || !isInt(n)) math('x! needs a whole number ≥ 0');
+    n = Math.round(n); if (n > 170) math('x! is too large (max 170!)');
+    let r = 1; for (let k = 2; k <= n; k++) r *= k; return r;
+  }
+  function trigExact(f, x, st) {                       // sin 180° = 0, cos 90° = 0, tan 45° = 1 exactly
+    if (st.angle !== 'RAD') {
+      const half = st.angle === 'DEG' ? 180 : 200, q = half / 2;
+      const m = ((x % half) + half) % half, near = (a, b) => Math.abs(a - b) < 1e-9;
+      const zeroSin = near(m, 0) || near(m, half), zeroCos = near(m, q);
+      if (f === 'sin' && zeroSin) return 0;
+      if (f === 'cos' && zeroCos) return 0;
+      if (f === 'tan') { if (zeroCos) math('tan is undefined at ' + (st.angle === 'DEG' ? '90°' : '100 grad') + ' (+ multiples of ' + (st.angle === 'DEG' ? '180°' : '200 grad') + ')'); if (zeroSin) return 0; }
+    }
+    const v = Math[f](angIn(x, st));
+    return Math.abs(v) < 1e-15 ? 0 : v;
+  }
+  function simpson(f, a, b) {                         // adaptive Simpson, tolerance 1e-10
+    const s = (a, b, fa, fm, fb) => (b - a) / 6 * (fa + 4 * fm + fb);
+    function rec(a, b, fa, fm, fb, whole, eps, depth) {
+      const m = (a + b) / 2, lm = (a + m) / 2, rm = (m + b) / 2;
+      const flm = f(lm), frm = f(rm);
+      const left = s(a, m, fa, flm, fm), right = s(m, b, fm, frm, fb);
+      if (depth <= 0 || Math.abs(left + right - whole) <= 15 * eps) return left + right + (left + right - whole) / 15;
+      return rec(a, m, fa, flm, fm, left, eps / 2, depth - 1) + rec(m, b, fm, frm, fb, right, eps / 2, depth - 1);
+    }
+    if (a === b) return 0;
+    const fa = f(a), fb = f(b), fm = f((a + b) / 2);
+    return rec(a, b, fa, fm, fb, s(a, b, fa, fm, fb), 1e-10, 40);
+  }
+
+  function evalAst(n, st, env) {
+    const E = x => evalAst(x, st, env);
+    switch (n.k) {
+      case 'num': return n.v;
+      case 'rand': return Math.round(Math.random() * 1000) / 1000;
+      case 'var': {
+        if (env && n.n in env) return env[n.n];
+        if (n.n === 'Ans') return st.ans || 0;
+        const v = st.vars ? st.vars[n.n] : 0; return v === undefined ? 0 : v;
+      }
+      case 'neg': return -E(n.a);
+      case 'post': {
+        const a = E(n.a);
+        if (n.o === '!') return fact(a);
+        if (n.o === '%') return a / 100;
+        if (n.o === '°') return st.angle === 'RAD' ? a * Math.PI / 180 : st.angle === 'GRA' ? a * 400 / 360 : a;   // 30° typed while in RAD mode
+        return a;
+      }
+      case 'bin': {
+        const a = E(n.a), b = E(n.b);
+        switch (n.o) {
+          case '+': return a + b;
+          case '-': return a - b;
+          case '*': return a * b;
+          case '/': if (b === 0) math('Division by zero'); return a / b;
+          case '^': {
+            if (a < 0 && !isInt(b)) {                 // (-8)^(1/3) = -2 like Casio for odd roots
+              const inv = 1 / b; if (isInt(inv) && Math.round(inv) % 2 !== 0) return -Math.pow(-a, b);
+              math('A negative number cannot have this power');
+            }
+            if (a === 0 && b < 0) math('Division by zero');
+            return Math.pow(a, b);
+          }
+        }
+      }
+      case 'call': return callFn(n, st, env);
+    }
+    syntax();
+  }
+
+  function callFn(n, st, env) {
+    const f = n.f;
+    if (LAZY[f]) {
+      const body = n.args[0];
+      const fx = x => { const v = evalAst(body, st, Object.assign({}, env, { X: x })); if (!isFinite(v)) math('The function is not defined in this range'); return v; };
+      const a = evalAst(n.args[1], st, env);
+      if (f === 'deriv') {                            // 5-point central difference with step chosen from |a|
+        const h = 1e-3 * Math.max(1, Math.abs(a));
+        return clean((-fx(a + 2 * h) + 8 * fx(a + h) - 8 * fx(a - h) + fx(a - 2 * h)) / (12 * h));
+      }
+      const b = evalAst(n.args[2], st, env);
+      if (f === 'integ') return clean(simpson(fx, a, b));
+      if (!isInt(a) || !isInt(b)) math('Σ and Π need whole-number limits');
+      if (b - a > 1e6) math('Too many terms');
+      let r = f === 'sum' ? 0 : 1;
+      for (let k = Math.round(a); k <= Math.round(b); k++) r = f === 'sum' ? r + fx(k) : r * fx(k);
+      return r;
+    }
+    const v = n.args.map(a => evalAst(a, st, env));
+    const [x, y] = v;
+    switch (f) {
+      case 'sin': case 'cos': case 'tan': return trigExact(f, x, st);
+      case 'asin': if (x < -1 || x > 1) math('sin⁻¹ needs a value between −1 and 1'); return angOut(Math.asin(x), st);
+      case 'acos': if (x < -1 || x > 1) math('cos⁻¹ needs a value between −1 and 1'); return angOut(Math.acos(x), st);
+      case 'atan': return angOut(Math.atan(x), st);
+      case 'atan2': return angOut(Math.atan2(x, y), st);
+      case 'sinh': return Math.sinh(x); case 'cosh': return Math.cosh(x); case 'tanh': return Math.tanh(x);
+      case 'asinh': return Math.asinh(x);
+      case 'acosh': if (x < 1) math('cosh⁻¹ needs a value ≥ 1'); return Math.acosh(x);
+      case 'atanh': if (x <= -1 || x >= 1) math('tanh⁻¹ needs a value between −1 and 1'); return Math.atanh(x);
+      case 'ln': if (x <= 0) math('ln needs a positive number'); return Math.log(x);
+      case 'log': if (x <= 0) math('log needs a positive number'); return Math.log10(x);
+      case 'log2': if (x <= 0) math('log₂ needs a positive number'); return Math.log2(x);
+      case 'logb': if (x <= 0 || x === 1 || y <= 0) math('logₐ(b) needs a > 0, a ≠ 1 and b > 0'); return Math.log(y) / Math.log(x);
+      case 'exp': return Math.exp(x);
+      case 'sqrt': if (x < 0) math('√ of a negative number is not real'); return Math.sqrt(x);
+      case 'cbrt': return Math.cbrt(x);
+      case 'root': if (x === 0) math('0th root is undefined'); if (y < 0) { if (isInt(x) && Math.round(x) % 2 !== 0) return -Math.pow(-y, 1 / x); math('Even root of a negative number is not real'); } return Math.pow(y, 1 / x);
+      case 'abs': return Math.abs(x);
+      case 'nCr': case 'nPr': {
+        if (!isInt(x) || !isInt(y) || x < 0 || y < 0 || y > x) math(f + ' needs whole numbers with 0 ≤ r ≤ n');
+        const N = Math.round(x), R = Math.round(y); let r = 1;
+        if (f === 'nPr') { for (let k = 0; k < R; k++) r *= (N - k); return r; }
+        const rr = Math.min(R, N - R); for (let k = 1; k <= rr; k++) r = r * (N - rr + k) / k; return Math.round(r);
+      }
+      case 'mod': if (y === 0) math('mod by zero'); return x - y * Math.floor(x / y);
+      case 'floor': return Math.floor(x); case 'ceil': return Math.ceil(x);
+      case 'int': return Math.trunc(x); case 'frac': return x - Math.trunc(x); case 'sign': return Math.sign(x);
+      case 'round': { const d = Math.round(y); if (d < 0 || d > 12) math('round(x, n) needs 0 ≤ n ≤ 12'); const p = Math.pow(10, d); return Math.round((x + Math.sign(x) * 1e-12) * p) / p; }
+      case 'gcd': case 'lcm': {
+        if (!isInt(x) || !isInt(y)) math(f.toUpperCase() + ' needs whole numbers');
+        let a = Math.abs(Math.round(x)), b = Math.abs(Math.round(y)); const pa = a, pb = b;
+        while (b) [a, b] = [b, a % b];
+        return f === 'gcd' ? a : (a === 0 ? 0 : pa / a * pb);
+      }
+      case 'min': return Math.min(x, y); case 'max': return Math.max(x, y);
+      case 'hypot': return Math.hypot(x, y);
+      case 'ranint': { if (!isInt(x) || !isInt(y) || y < x) math('RanInt(a, b) needs whole numbers a ≤ b'); return Math.round(x) + Math.floor(Math.random() * (Math.round(y) - Math.round(x) + 1)); }
+      case 'deg': return x * 180 / Math.PI;
+      case 'rad': return x * Math.PI / 180;
+      case 'Pol': {                                   // Pol(x, y) → r ; θ stored in Y  (Casio: r→X, θ→Y)
+        const r = Math.hypot(x, y), th = angOut(Math.atan2(y, x), st);
+        if (!env) { st._multi = { kind: 'Pol', r, th }; } return r;
+      }
+      case 'Rec': {                                   // Rec(r, θ) → x ; y stored in Y
+        const X = clean(x * Math.cos(angIn(y, st))), Y = clean(x * Math.sin(angIn(y, st)));
+        if (!env) { st._multi = { kind: 'Rec', x: X, y: Y }; } return X;
+      }
+    }
+    syntax('Unknown function ' + f);
+  }
+
+  /* ---------------- formatting ---------------- */
+  const SUPD = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+  const sci = (mant, exp) => mant + '×10' + String(exp).replace(/./g, c => SUPD[c] || c);
+  function format(v, fmt) {
+    fmt = fmt || { mode: 'Norm' };
+    if (typeof v !== 'number' || !isFinite(v)) return 'Math ERROR';
+    if (v === 0 || Object.is(v, -0)) return fmt.mode === 'Fix' ? (0).toFixed(fmt.digits) : '0';
+    const a = Math.abs(v);
+    if (fmt.mode === 'Fix') {
+      if (a >= 1e10) return format(v, { mode: 'Sci', digits: 10 });
+      return (Math.round(v * Math.pow(10, fmt.digits)) / Math.pow(10, fmt.digits)).toFixed(fmt.digits);
+    }
+    if (fmt.mode === 'Sci') {
+      const d = Math.max(1, Math.min(10, fmt.digits || 10));
+      const [m, e] = v.toExponential(d - 1).split('e');
+      return sci(m, +e);
+    }
+    if (fmt.mode === 'Eng') {
+      let e = Math.floor(Math.log10(a) / 3) * 3; let m = v / Math.pow(10, e);
+      m = +m.toPrecision(10); if (Math.abs(m) >= 1000) { m /= 1000; e += 3; }
+      return e === 0 ? String(+m.toPrecision(10)) : sci(String(+m.toPrecision(10)), e);
+    }
+    // Norm: up to 10 significant digits; scientific only for very small or very large numbers
+    if (a >= 1e10 || a < 1e-9) { const [m, e] = v.toExponential(9).split('e'); return sci(String(+m), +e); }
+    return String(+v.toPrecision(10));
+  }
+  function toFraction(v) {                           // S⇔D: exact-looking fraction via continued fractions
+    if (!isFinite(v) || isInt(v)) return null;
+    const sgn = v < 0 ? -1 : 1, x = Math.abs(v);
+    let h1 = 1, h0 = 0, k1 = 0, k0 = 1, b = x;
+    for (let i = 0; i < 40; i++) {
+      const a = Math.floor(b);
+      [h1, h0] = [a * h1 + h0, h1]; [k1, k0] = [a * k1 + k0, k1];
+      if (k1 > 100000) return null;
+      if (Math.abs(x - h1 / k1) < 1e-13 * Math.max(1, x)) break;
+      if (b - a < 1e-12) break;
+      b = 1 / (b - a);
+    }
+    if (Math.abs(x - h1 / k1) > 1e-12 * Math.max(1, x)) return null;
+    const whole = Math.floor(h1 / k1);
+    return { num: sgn * h1, den: k1, text: (sgn < 0 ? '−' : '') + h1 + '⁄' + k1, mixed: whole ? (sgn < 0 ? '−' : '') + whole + ' ' + (h1 - whole * k1) + '⁄' + k1 : null };
+  }
+  function toDMS(v) {                                // decimal degrees → ° ′ ″
+    const sgn = v < 0 ? '−' : ''; let a = Math.abs(v);
+    let d = Math.floor(a), mf = (a - d) * 60, m = Math.floor(mf), s = (mf - m) * 60;
+    s = Math.round(s * 100) / 100; if (s >= 60) { s -= 60; m++; } if (m >= 60) { m -= 60; d++; }
+    return sgn + d + '°' + m + '′' + s + '″';
+  }
+
+  /* ---------------- public evaluate ---------------- */
+  function evaluate(src, st) {
+    st._multi = null;
+    const ast = parse(src);
+    let v = evalAst(ast, st, null);
+    if (typeof v !== 'number' || isNaN(v)) math();
+    if (!isFinite(v)) math('Result too large, or division by zero');
+    v = clean(v);
+    if (Math.abs(v) >= 1e-6 && Math.abs(v - Math.round(v)) < 1e-12 * Math.max(1, Math.abs(v))) v = Math.round(v);   // tidy 2.9999999999999996 → 3
+    else v = +v.toPrecision(15);
+    const out = { value: v, multi: st._multi };
+    st._multi = null;
+    return out;
+  }
+
+  /* ---------------- SOLVE: f(X)=0 near a guess (Newton + secant + bisection fallback) ---------------- */
+  function solve(src, guess, st) {
+    const ast = parse(src, { allowEq: true });
+    const f = x => { const y = evalAst(ast, st, { X: x }); return y; };
+    const ok = y => typeof y === 'number' && isFinite(y);
+    let x = isFinite(guess) ? guess : 0;
+    try { f(x); } catch (e) { x = x + 0.5; }
+    const tryNewton = x0 => {
+      let x = x0;
+      for (let i = 0; i < 200; i++) {
+        let y; try { y = f(x); } catch (e) { return null; }
+        if (!ok(y)) return null;
+        if (Math.abs(y) < 1e-13) return x;
+        const h = 1e-6 * Math.max(1, Math.abs(x));
+        let d; try { d = (f(x + h) - f(x - h)) / (2 * h); } catch (e) { return null; }
+        if (!ok(d) || d === 0) { x += h * 10; continue; }
+        let step = y / d, nx = x - step, tries = 0;
+        while (tries++ < 30) { let ny; try { ny = f(nx); } catch (e) { ny = NaN; } if (ok(ny) && Math.abs(ny) < Math.abs(y) * 1.5 + 1e-12) break; step /= 2; nx = x - step; }
+        if (Math.abs(nx - x) < 1e-14 * Math.max(1, Math.abs(x))) { x = nx; break; }
+        x = nx;
+      }
+      let y; try { y = f(x); } catch (e) { return null; }
+      return ok(y) && Math.abs(y) < 1e-7 * Math.max(1, Math.abs(x)) ? x : null;
+    };
+    let root = tryNewton(x);
+    if (root === null) {                              // scan outward for a sign change, then bisect
+      for (let w = 0.5; w < 1e7 && root === null; w *= 2) {
+        const pts = [x - w, x + w];
+        for (const q of pts) {
+          let a = x, b = q, fa, fb; try { fa = f(a); fb = f(b); } catch (e) { continue; }
+          if (ok(fa) && ok(fb) && fa * fb <= 0) {
+            for (let i = 0; i < 200; i++) { const m = (a + b) / 2; const fm = f(m); if (fa * fm <= 0) { b = m; fb = fm; } else { a = m; fa = fm; } }
+            root = tryNewton((a + b) / 2) ?? (a + b) / 2; break;
+          }
+        }
+      }
+    }
+    if (root === null) throw new CalcError('Can\'t Solve', 'No solution found near X = ' + format(x) + '. Try another starting value.');
+    root = clean(+root.toPrecision(12));
+    let lr; try { lr = f(root); } catch (e) { lr = 0; }
+    return { x: root, lr: clean(lr) };
+  }
+
+  /* ---------------- EQN mode ---------------- */
+  const C = (re, im) => ({ re: clean(+re.toPrecision(12)), im: clean(+im.toPrecision(12)) });
+  const eqn = {
+    poly2(a, b, c) {
+      if (a === 0) { if (b === 0) math('a and b cannot both be 0'); return [C(-c / b, 0)]; }
+      const D = b * b - 4 * a * c;
+      if (D >= 0) { const s = Math.sqrt(D), q = -0.5 * (b + Math.sign(b || 1) * s); const r1 = q / a, r2 = q !== 0 ? c / q : -b / (2 * a); return [C(Math.max(r1, r2), 0), C(Math.min(r1, r2), 0)]; }
+      const re = -b / (2 * a), im = Math.sqrt(-D) / (2 * Math.abs(a));
+      return [C(re, im), C(re, -im)];
+    },
+    poly3(a, b, c, d) {
+      if (a === 0) return eqn.poly2(b, c, d);
+      b /= a; c /= a; d /= a;
+      const p = c - b * b / 3, q = 2 * b * b * b / 27 - b * c / 3 + d, sh = -b / 3;
+      const disc = q * q / 4 + p * p * p / 27;
+      const roots = [];
+      if (Math.abs(disc) < 1e-14) {
+        const u = Math.cbrt(-q / 2);
+        roots.push(C(2 * u + sh, 0), C(-u + sh, 0)); if (Math.abs(u) < 1e-14) roots.length = 1;
+        while (roots.length < 3) roots.push(roots[roots.length - 1]);
+      } else if (disc > 0) {
+        const s = Math.sqrt(disc), u = Math.cbrt(-q / 2 + s), v = Math.cbrt(-q / 2 - s);
+        roots.push(C(u + v + sh, 0), C(-(u + v) / 2 + sh, Math.sqrt(3) / 2 * (u - v)), C(-(u + v) / 2 + sh, -Math.sqrt(3) / 2 * (u - v)));
+      } else {
+        const r = Math.sqrt(-p * p * p / 27), phi = Math.acos(Math.max(-1, Math.min(1, -q / (2 * r)))), m = 2 * Math.cbrt(r);
+        for (let k = 0; k < 3; k++) roots.push(C(m * Math.cos((phi + 2 * Math.PI * k) / 3) + sh, 0));
+        roots.sort((x, y) => y.re - x.re);
+      }
+      return roots;
+    },
+    linear(A, B) {                                   // Gaussian elimination with partial pivoting
+      const n = A.length, M = A.map((r, i) => r.concat([B[i]]));
+      for (let col = 0; col < n; col++) {
+        let piv = col; for (let r = col + 1; r < n; r++) if (Math.abs(M[r][col]) > Math.abs(M[piv][col])) piv = r;
+        if (Math.abs(M[piv][col]) < 1e-12) throw new CalcError('No unique solution', 'The equations have no single solution (infinitely many or none).');
+        [M[col], M[piv]] = [M[piv], M[col]];
+        for (let r = 0; r < n; r++) if (r !== col) { const fct = M[r][col] / M[col][col]; for (let k = col; k <= n; k++) M[r][k] -= fct * M[col][k]; }
+      }
+      return M.map((r, i) => clean(+(r[n] / r[i]).toPrecision(12)));
+    }
+  };
+
+  root.CalcEngine = { evaluate, solve, format, toFraction, toDMS, parse, eqn, CalcError, VARS };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* =====================================================================
+   SCIENTIFIC CALCULATOR – keypad, display and multi-step features
+   (uses CalcEngine; no eval anywhere)
+   ===================================================================== */
+const CX = {
+  st: { angle: 'DEG', vars: { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, X: 0, Y: 0, M: 0 }, ans: 0 },
+  fmt: { mode: 'Norm', digits: 4 },
+  shift: false, hyp: false, done: false, last: null, view: 'dec', hist: [], hpos: -1, bar: null, eqType: 'q2'
 };
-(function dragCalc() {                                   // move the window by its title bar
-  const w = $('calcWin'), h = $('calcHead'); let sx, sy, ox, oy, on = false;
-  h.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; on = true; sx = e.clientX; sy = e.clientY; const r = w.getBoundingClientRect(); ox = r.left; oy = r.top; try { h.setPointerCapture(e.pointerId); } catch (_) {} });
-  h.addEventListener('pointermove', e => { if (!on) return; const x = Math.min(Math.max(0, ox + e.clientX - sx), innerWidth - w.offsetWidth), y = Math.min(Math.max(0, oy + e.clientY - sy), Math.max(0, innerHeight - w.offsetHeight)); w.style.left = x + 'px'; w.style.top = y + 'px'; w.style.right = 'auto'; });
-  h.addEventListener('pointerup', () => { on = false; });
-})();
+const CX_KEYS = {
+  fn: [
+    [{ m: 'SHIFT', a: 'SHIFT', c: 'sh', t: 'Second function (yellow labels)' }, { m: 'HYP', a: 'HYP', c: 'hy', t: 'Hyperbolic sin/cos/tan' },
+     { m: '◀', a: 'L', t: 'Move cursor left' }, { m: '▶', a: 'R', t: 'Move cursor right' },
+     { m: '▲', a: 'UP', t: 'Previous calculation (replay)' }, { m: '▼', a: 'DOWN', t: 'Next calculation' }],
+    [{ m: 'x⁻¹', k: '⁻¹', s: 'x!', sk: '!' }, { m: 'x²', k: '²', s: 'x³', sk: '³' }, { m: '√', k: '√(', s: '∛', sk: '∛(' },
+     { m: 'xʸ', k: '^(', s: 'ʸ√x', sk: 'root(', st: 'root(n, x) = n-th root of x' }, { m: 'log', k: 'log(', s: '10ˣ', sk: '10^(' }, { m: 'ln', k: 'ln(', s: 'eˣ', sk: 'e^(' }],
+    [{ m: 'sin', k: 'sin(', s: 'sin⁻¹', sk: 'sin⁻¹(', hm: 'sinh', hk: 'sinh(', hs: 'sinh⁻¹', hsk: 'sinh⁻¹(' },
+     { m: 'cos', k: 'cos(', s: 'cos⁻¹', sk: 'cos⁻¹(', hm: 'cosh', hk: 'cosh(', hs: 'cosh⁻¹', hsk: 'cosh⁻¹(' },
+     { m: 'tan', k: 'tan(', s: 'tan⁻¹', sk: 'tan⁻¹(', hm: 'tanh', hk: 'tanh(', hs: 'tanh⁻¹', hsk: 'tanh⁻¹(' },
+     { m: 'logₐb', k: 'logb(', s: 'log₂', sk: 'log2(', t: 'logb(a, b) = log of b to base a' },
+     { m: '∫dx', k: '∫(', s: 'd/dx', sk: 'd/dx(', t: '∫(f(X), a, b) – definite integral', st: 'd/dx(f(X), a) – derivative at X = a' },
+     { m: 'Σ', k: 'Σ(', s: 'Π', sk: 'Π(', t: 'Σ(f(X), a, b) – sum for X = a…b', st: 'Π(f(X), a, b) – product' }],
+    [{ m: '(−)', k: '−', s: 'Abs', sk: 'abs(', t: 'Negative sign' }, { m: '(', k: '(' }, { m: ')', k: ')' }, { m: ',', k: ', ', t: 'Separates values, e.g. nCr(5, 2)' },
+     { m: 'π', k: 'π', s: 'e', sk: 'e' }, { m: '°', k: '°', s: '°′″', sa: 'DMS', t: 'Degree sign (e.g. sin(30°) in RAD mode)', st: 'Show the result in degrees-minutes-seconds' }],
+    [{ m: 'STO', a: 'STO', s: 'RCL', sa: 'RCL', t: 'Store the result in A–F, X, Y, M', st: 'Recall a stored variable' }, { m: 'X', k: 'X', s: 'Y', sk: 'Y', t: 'Variable X (used by SOLVE, CALC, ∫, d/dx, Σ)' },
+     { m: 'M+', a: 'M+', s: 'M−', sa: 'M-', t: 'Add the result to memory M' }, { m: 'MR', k: 'M', s: 'MC', sa: 'MC', t: 'Recall memory M', st: 'Clear memory M' },
+     { m: 'S⇔D', a: 'SD', s: 'ENG', sa: 'ENG', t: 'Switch the result between fraction and decimal', st: 'Engineering notation (×10³ steps)' }, { m: '%', k: '%', s: 'mod', sk: 'mod(', st: 'mod(a, b) – remainder' }],
+    [{ m: 'nCr', k: 'nCr(', s: 'nPr', sk: 'nPr(' }, { m: 'Pol', k: 'Pol(', s: 'Rec', sk: 'Rec(', t: 'Pol(x, y) → r and θ (θ stored in Y)', st: 'Rec(r, θ) → x and y (y stored in Y)' },
+     { m: 'Ran#', k: 'Ran', s: 'RanInt', sk: 'RanInt(' }, { m: 'SOLVE', a: 'SOLVE', s: 'CALC', sa: 'CALC', c: 'mode', t: 'Solve an equation in X, e.g. X²−5X+6=0', st: 'Evaluate the expression for a value of X' },
+     { m: 'EQN', a: 'EQN', c: 'mode', t: 'Quadratic, cubic and simultaneous equations' }, { m: 'Rnd', a: 'RND', s: 'Int', sk: 'int(', t: 'Round the result to the displayed digits' }]
+  ],
+  num: [
+    [{ m: '7', k: '7' }, { m: '8', k: '8' }, { m: '9', k: '9' }, { m: 'DEL', a: 'DEL', c: 'del', s: 'INS', sa: 'INS' }, { m: 'AC', a: 'AC', c: 'ac', s: 'CLR', sa: 'CLRALL', st: 'Clear memory, variables and history' }],
+    [{ m: '4', k: '4' }, { m: '5', k: '5' }, { m: '6', k: '6' }, { m: '×', k: '×', c: 'op' }, { m: '÷', k: '÷', c: 'op' }],
+    [{ m: '1', k: '1' }, { m: '2', k: '2' }, { m: '3', k: '3' }, { m: '+', k: '+', c: 'op' }, { m: '−', k: '-', c: 'op' }],
+    [{ m: '0', k: '0' }, { m: '.', k: '.' }, { m: '×10ˣ', k: 'ᴇ', t: 'Power of ten, e.g. 2.5×10ˣ−3 = 0.0025' }, { m: 'Ans', k: 'Ans', t: 'Last result' }, { m: '=', a: 'EQ', c: 'eq', s: '≈', sa: 'EQ' }]
+  ]
+};
+function cxBuildKeys() {
+  const btn = (k, ri, ci, grp) => `<button data-g="${grp}" data-r="${ri}" data-c="${ci}" class="${k.c || ''}" title="${(k.t || '') + (k.s ? (k.t ? '\nSHIFT: ' : 'SHIFT: ') + (k.st || k.s) : '')}"><span class="s">${k.s || ''}</span><span class="mk">${k.m}</span></button>`;
+  $('cxKeys').innerHTML = CX_KEYS.fn.map((r, ri) => `<div class="fn">${r.map((k, ci) => btn(k, ri, ci, 'fn')).join('')}</div>`).join('') +
+    CX_KEYS.num.map((r, ri) => `<div class="num">${r.map((k, ci) => btn(k, ri, ci, 'num')).join('')}</div>`).join('');
+  $('cxFmtDigits').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => `<button data-d="${d}">${d}</button>`).join('');
+}
+function cxRefreshKeys() {                         // HYP changes the trig labels
+  document.querySelectorAll('#cxKeys button[data-g="fn"]').forEach(b => {
+    const k = CX_KEYS.fn[b.dataset.r][b.dataset.c]; if (!k.hm) return;
+    b.querySelector('.mk').textContent = CX.hyp ? k.hm : k.m;
+    const s = b.querySelector('.s'); s.textContent = CX.hyp ? k.hs : k.s; s.classList.toggle('h', CX.hyp);
+  });
+}
+const cxFmtNum = v => CalcEngine.format(v, CX.fmt);
+const cxPlain = v => { const s = String(+(+v).toPrecision(10)); return s.replace('e+', 'e'); };   // for the answer box / inserting into the input
+function cxInd() {
+  $('calcWin').classList.toggle('shift', CX.shift); $('calcWin').classList.toggle('hyp', CX.hyp);
+  $('iS').classList.toggle('on', CX.shift); $('iH').classList.toggle('on', CX.hyp);
+  $('iSTO').classList.toggle('on', CX.bar === 'STO'); $('iRCL').classList.toggle('on', CX.bar === 'RCL');
+  $('iM').classList.toggle('on', CX.st.vars.M !== 0);
+  $('iAng').textContent = CX.st.angle[0]; $('cxAng').textContent = CX.st.angle;
+  const f = CX.fmt.mode === 'Norm' ? '' : CX.fmt.mode + (CX.fmt.mode === 'Eng' ? '' : CX.fmt.digits);
+  $('iFmt').textContent = f; $('cxFmtBtn').textContent = CX.fmt.mode === 'Norm' ? 'Norm' : CX.fmt.mode + (CX.fmt.mode === 'Eng' ? '' : ' ' + CX.fmt.digits);
+}
+function cxShowValue() {                            // result line for CX.last in the chosen view
+  const o = $('cxOut'); o.className = '';
+  if (!CX.last) { o.textContent = '0'; return; }
+  const L = CX.last;
+  if (L.kind === 'solve') { o.innerHTML = 'X = ' + esc(cxFmtNum(L.value)) + `<small>L − R = ${esc(cxFmtNum(L.lr))}</small>`; return; }
+  if (L.multi && L.multi.kind === 'Pol') { o.innerHTML = 'r = ' + esc(cxFmtNum(L.multi.r)) + `<small>θ = ${esc(cxFmtNum(L.multi.th))}${CX.st.angle === 'DEG' ? '°' : CX.st.angle === 'RAD' ? ' rad' : ' grad'}  (r→X, θ→Y)</small>`; return; }
+  if (L.multi && L.multi.kind === 'Rec') { o.innerHTML = 'x = ' + esc(cxFmtNum(L.multi.x)) + `<small>y = ${esc(cxFmtNum(L.multi.y))}  (x→X, y→Y)</small>`; return; }
+  let txt;
+  if (CX.view === 'frac') { const f = CalcEngine.toFraction(L.value); txt = f ? (f.mixed ? f.text + '  = ' + f.mixed : f.text) : cxFmtNum(L.value); }
+  else if (CX.view === 'eng') txt = CalcEngine.format(L.value, { mode: 'Eng' });
+  else if (CX.view === 'dms') txt = CalcEngine.toDMS(L.value);
+  else txt = cxFmtNum(L.value);
+  o.textContent = txt;
+}
+function cxErr(e) {
+  const o = $('cxOut'); o.className = 'err';
+  o.innerHTML = esc(e.kind || 'Error') + `<br><span style="font-weight:500">${esc(e.message || '')}</span>`;
+}
+function cxPreview() {                              // live result while typing (does not change Ans or variables)
+  const src = $('cxIn').value.trim(); const p = $('cxPrev');
+  if (!src || CX.done || !/[-+×÷*/^²³⁻¹!%√∛(,ᴇ]|[a-zA-Zπ]/.test(src.replace(/^-?\d+\.?\d*$/, ''))) { p.textContent = ''; return; }
+  try {
+    if (/Ran|RanInt/.test(src)) { p.textContent = ''; return; }
+    const st = { angle: CX.st.angle, vars: Object.assign({}, CX.st.vars), ans: CX.st.ans };
+    p.textContent = '= ' + cxFmtNum(CalcEngine.evaluate(src, st).value);
+  } catch (e) { p.textContent = ''; }
+}
+function cxSetInput(v, caretEnd = true) {
+  const el = $('cxIn'); el.value = v; if (caretEnd) { const n = v.length; el.setSelectionRange(n, n); }
+  CX.done = false; cxPreview();
+}
+function cxInsert(t) {
+  const el = $('cxIn');
+  if (CX.done) {                                    // after "=": an operator continues from Ans, anything else starts fresh
+    if (/^([-+×÷^²³!%]|⁻¹|\^\()/.test(t) && t !== '−') { el.value = 'Ans'; }
+    else el.value = '';
+    el.setSelectionRange(el.value.length, el.value.length); CX.done = false; CX.view = 'dec';
+  }
+  const a = el.selectionStart ?? el.value.length, b = el.selectionEnd ?? el.value.length;
+  el.value = el.value.slice(0, a) + t + el.value.slice(b);
+  const pos = a + t.length; el.setSelectionRange(pos, pos);
+  cxFocus(); cxPreview();
+}
+function cxFocus() { try { $('cxIn').focus({ preventScroll: true }); } catch (_) {} }
+function cxRun() {
+  const src = $('cxIn').value.trim();
+  if (!src) { if (CX.last) cxShowValue(); return; }
+  try {
+    const r = CalcEngine.evaluate(src, CX.st);
+    CX.st.ans = r.value;
+    if (r.multi) { if (r.multi.kind === 'Pol') { CX.st.vars.X = r.multi.r; CX.st.vars.Y = r.multi.th; } else { CX.st.vars.X = r.multi.x; CX.st.vars.Y = r.multi.y; } }
+    CX.last = { value: r.value, multi: r.multi, src }; CX.view = 'dec'; CX.done = true;
+    cxAddHist(src, r.value, r.multi);
+    $('cxPrev').textContent = ''; cxShowValue();
+  } catch (e) { CX.done = false; cxErr(e); }
+  cxInd();
+}
+function cxAddHist(src, v, multi) {
+  if (!CX.hist.length || CX.hist[0].src !== src || CX.hist[0].v !== v) CX.hist.unshift({ src, v, multi });
+  CX.hist = CX.hist.slice(0, 40); CX.hpos = -1; cxRenderHist();
+}
+function cxRenderHist() {
+  $('cxHist').innerHTML = CX.hist.map((h, i) => `<div><span data-i="${i}" title="Edit this calculation">${esc(h.src)}</span><b data-v="${i}" title="Insert this value">= ${esc(cxFmtNum(h.v))}</b></div>`).join('');
+}
+function cxBar(kind) {                              // STO / RCL / SOLVE / CALC prompt line
+  CX.bar = kind; const b = $('cxBar');
+  if (!kind) { b.classList.add('hidden'); b.innerHTML = ''; cxInd(); return; }
+  const vars = CalcEngine.VARS;
+  if (kind === 'STO' || kind === 'RCL') {
+    b.innerHTML = `<div class="lbl">${kind === 'STO' ? 'Store ' + esc(cxFmtNum(CX.st.ans)) + ' in which variable?' : 'Recall which variable? (current values shown on hover)'}</div>` +
+      vars.map(v => `<button data-var="${v}" title="${v} = ${esc(cxFmtNum(CX.st.vars[v]))}">${v}</button>`).join('') + `<button data-x="1" title="Cancel">✕</button>`;
+  } else {
+    const expr = $('cxIn').value.trim();
+    b.innerHTML = kind === 'SOLVE'
+      ? `<div class="lbl">Solve ${esc(expr || '…')} ${/=/.test(expr) ? '' : '= 0'} for X — starting value:</div><input id="cxBarIn" value="${esc(cxPlain(CX.st.vars.X))}"><button class="go" data-go="1">Solve</button><button data-x="1">✕</button>`
+      : `<div class="lbl">CALC: value of X for ${esc(expr || '…')}</div><input id="cxBarIn" value="${esc(cxPlain(CX.st.vars.X))}"><button class="go" data-go="1">Evaluate</button><button data-x="1">✕</button>`;
+  }
+  b.classList.remove('hidden'); cxInd();
+  const bi = $('cxBarIn'); if (bi) { bi.focus(); bi.select(); bi.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); cxBarGo(); } }; }
+}
+function cxBarGo() {
+  const kind = CX.bar, expr = $('cxIn').value.trim();
+  let x; try { x = CalcEngine.evaluate($('cxBarIn').value || '0', { angle: CX.st.angle, vars: Object.assign({}, CX.st.vars), ans: CX.st.ans }).value; }
+  catch (e) { return cxErr({ kind: 'Syntax ERROR', message: 'The value of X is not a number' }); }
+  if (!expr) { cxBar(null); return cxErr({ kind: 'Syntax ERROR', message: kind === 'SOLVE' ? 'Type an equation in X first, e.g. X²−5X+6=0' : 'Type an expression in X first, e.g. 3X²+2' }); }
+  cxBar(null);
+  try {
+    if (kind === 'SOLVE') {
+      const r = CalcEngine.solve(expr, x, CX.st);
+      CX.st.vars.X = r.x; CX.st.ans = r.x;
+      CX.last = { kind: 'solve', value: r.x, lr: r.lr, src: expr }; CX.done = true; CX.view = 'dec';
+      cxAddHist('SOLVE ' + expr, r.x); cxShowValue();
+    } else {
+      CX.st.vars.X = x; cxRun();
+    }
+  } catch (e) { cxErr(e); }
+  cxInd();
+}
+function cxAction(a) {
+  const el = $('cxIn');
+  switch (a) {
+    case 'SHIFT': CX.shift = !CX.shift; cxInd(); return;
+    case 'HYP': CX.hyp = !CX.hyp; cxRefreshKeys(); cxInd(); return;
+    case 'L': case 'R': {
+      if (CX.done) { CX.done = false; }
+      const p = (el.selectionStart ?? el.value.length) + (a === 'L' ? -1 : 1), q = Math.max(0, Math.min(el.value.length, p));
+      el.setSelectionRange(q, q); cxFocus(); return;
+    }
+    case 'UP': case 'DOWN': {
+      if (!CX.hist.length) return;
+      CX.hpos = Math.max(-1, Math.min(CX.hist.length - 1, CX.hpos + (a === 'UP' ? 1 : -1)));
+      const h = CX.hist[CX.hpos]; cxSetInput(h ? h.src.replace(/^SOLVE /, '') : ''); cxFocus(); return;
+    }
+    case 'DEL': {
+      if (CX.done) { CX.done = false; }
+      const s = el.selectionStart ?? el.value.length, e = el.selectionEnd ?? s;
+      if (s !== e) { el.value = el.value.slice(0, s) + el.value.slice(e); el.setSelectionRange(s, s); }
+      else if (s > 0) {                             // delete whole tokens like "sin⁻¹(" or "Ans" in one press
+        const before = el.value.slice(0, s);
+        const m = /(sinh⁻¹\(|cosh⁻¹\(|tanh⁻¹\(|sin⁻¹\(|cos⁻¹\(|tan⁻¹\(|d\/dx\(|[A-Za-z]+[0-9]*\(|Ans|⁻¹|, )$/.exec(before);
+        const n = m ? m[0].length : 1;
+        el.value = before.slice(0, -n) + el.value.slice(s); el.setSelectionRange(s - n, s - n);
+      }
+      cxPreview(); cxFocus(); return;
+    }
+    case 'INS': cxFocus(); return;
+    case 'AC': cxSetInput(''); $('cxOut').className = ''; $('cxOut').textContent = '0'; $('cxPrev').textContent = ''; CX.last = null; cxBar(null); cxFocus(); return;
+    case 'CLRALL':
+      Object.keys(CX.st.vars).forEach(k => CX.st.vars[k] = 0); CX.st.ans = 0; CX.hist = []; cxRenderHist(); cxAction('AC'); cxInd(); toast('Calculator memory, variables and history cleared'); return;
+    case 'EQ': cxRun(); return;
+    case 'STO': case 'M+': case 'M-':
+      if (el.value.trim() && !CX.done) { cxRun(); if (!CX.done) return; }
+      if (a === 'STO') { cxBar('STO'); return; }
+      CX.st.vars.M = +(CX.st.vars.M + (a === 'M+' ? 1 : -1) * CX.st.ans).toPrecision(15);
+      toast('M = ' + cxFmtNum(CX.st.vars.M)); cxInd(); return;
+    case 'RCL': cxBar('RCL'); return;
+    case 'MC': CX.st.vars.M = 0; toast('Memory M cleared'); cxInd(); return;
+    case 'SD': if (!CX.last || CX.last.kind) return; CX.view = CX.view === 'frac' ? 'dec' : 'frac';
+      if (CX.view === 'frac' && !CalcEngine.toFraction(CX.last.value)) { CX.view = 'dec'; toast('This value has no simple fraction form'); } cxShowValue(); return;
+    case 'ENG': if (!CX.last || CX.last.kind) return; CX.view = CX.view === 'eng' ? 'dec' : 'eng'; cxShowValue(); return;
+    case 'DMS': if (!CX.last || CX.last.kind) return; CX.view = CX.view === 'dms' ? 'dec' : 'dms'; cxShowValue(); return;
+    case 'RND': {
+      if (!CX.last) return;
+      const shown = CalcEngine.format(CX.st.ans, CX.fmt.mode === 'Norm' ? { mode: 'Sci', digits: 10 } : CX.fmt);
+      const v = +shown.replace('×10', 'e').replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]/g, c => ({ '⁻': '-', '⁰': 0, '¹': 1, '²': 2, '³': 3, '⁴': 4, '⁵': 5, '⁶': 6, '⁷': 7, '⁸': 8, '⁹': 9 })[c]);
+      if (isFinite(v)) { CX.st.ans = v; CX.last = { value: v, src: 'Rnd(Ans)' }; cxAddHist('Rnd(Ans)', v); cxShowValue(); }
+      return;
+    }
+    case 'SOLVE': case 'CALC': cxBar(a); return;
+    case 'EQN': $('cxKeys').classList.add('hidden'); $('cxEqn').classList.remove('hidden'); cxEqnForm(); return;
+  }
+}
+function cxKey(btn) {
+  const k = CX_KEYS[btn.dataset.g][btn.dataset.r][btn.dataset.c];
+  const sh = CX.shift && (k.s !== undefined);
+  let ins, act;
+  if (CX.hyp && k.hm) ins = sh ? k.hsk : k.hk;
+  else if (sh) { ins = k.sk; act = k.sa; }
+  else { ins = k.k; act = k.a; }
+  if (k.a === 'SHIFT' || k.a === 'HYP') return cxAction(k.a);
+  if (CX.shift) { CX.shift = false; }
+  if (CX.hyp && k.hm) { CX.hyp = false; cxRefreshKeys(); }
+  cxInd();
+  if (CX.bar && (CX.bar === 'STO' || CX.bar === 'RCL')) cxBar(null);
+  if (act) cxAction(act); else if (ins !== undefined) cxInsert(ins);
+}
+/* ---- EQN mode ---- */
+const CX_EQN = {
+  q2: { txt: 'aX² + bX + c = 0', names: ['a', 'b', 'c'] },
+  q3: { txt: 'aX³ + bX² + cX + d = 0', names: ['a', 'b', 'c', 'd'] },
+  l2: { txt: 'a₁X + b₁Y = c₁   ·   a₂X + b₂Y = c₂', names: ['a₁', 'b₁', 'c₁', 'a₂', 'b₂', 'c₂'], cols: 3 },
+  l3: { txt: 'aX + bY + cZ = d  (3 equations)', names: ['a₁', 'b₁', 'c₁', 'd₁', 'a₂', 'b₂', 'c₂', 'd₂', 'a₃', 'b₃', 'c₃', 'd₃'], cols: 4 }
+};
+function cxEqnForm() {
+  const d = CX_EQN[CX.eqType];
+  document.querySelectorAll('#cxEqnTabs button').forEach(b => b.classList.toggle('on', b.dataset.t === CX.eqType));
+  const cols = d.cols || d.names.length;
+  $('cxEqnForm').innerHTML = `<div class="eqtxt">${d.txt}</div><div class="grid" style="grid-template-columns:repeat(${cols},1fr)">` +
+    d.names.map(n => `<label>${n}</label>`).slice(0, cols).join('') +
+    d.names.map((n, i) => `<input data-i="${i}" title="${n} – numbers or expressions like 2π or 1/3" value="${CX['eq_' + CX.eqType] ? esc(CX['eq_' + CX.eqType][i] || '') : ''}">`).join('') + '</div>';
+  $('cxEqnRes').innerHTML = '';
+  const first = document.querySelector('#cxEqnForm input'); if (first) first.focus();
+  document.querySelectorAll('#cxEqnForm input').forEach(inp => inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); cxEqnSolve(); } }));
+}
+function cxEqnSolve() {
+  const t = CX.eqType, ins = [...document.querySelectorAll('#cxEqnForm input')];
+  CX['eq_' + t] = ins.map(i => i.value);
+  let v;
+  try {
+    v = ins.map((i, k) => { const s = i.value.trim() || '0'; try { return CalcEngine.evaluate(s, { angle: CX.st.angle, vars: Object.assign({}, CX.st.vars), ans: CX.st.ans }).value; } catch (e) { throw new Error('Coefficient ' + CX_EQN[t].names[k] + ': ' + e.message); } });
+  } catch (e) { $('cxEqnRes').innerHTML = `<div class="err">${esc(e.message)}</div>`; return; }
+  const cn = z => z.im === 0 ? cxFmtNum(z.re) : cxFmtNum(z.re) + (z.im < 0 ? ' − ' : ' + ') + cxFmtNum(Math.abs(z.im)) + 'i';
+  let rows = [];
+  try {
+    if (t === 'q2' || t === 'q3') {
+      const r = t === 'q2' ? CalcEngine.eqn.poly2(v[0], v[1], v[2]) : CalcEngine.eqn.poly3(v[0], v[1], v[2], v[3]);
+      rows = r.map((z, i) => ({ n: 'X' + (r.length > 1 ? '₁₂₃'[i] : ''), txt: cn(z), val: z.im === 0 ? z.re : null }));
+      if (t === 'q2' && v[0] !== 0) { const xv = -v[1] / (2 * v[0]); rows.push({ n: 'min/max', txt: 'at X = ' + cxFmtNum(xv) + ', value ' + cxFmtNum(v[0] * xv * xv + v[1] * xv + v[2]), val: null }); }
+    } else {
+      const n = t === 'l2' ? 2 : 3, A = [], B = [];
+      for (let i = 0; i < n; i++) { A.push(v.slice(i * (n + 1), i * (n + 1) + n)); B.push(v[i * (n + 1) + n]); }
+      const r = CalcEngine.eqn.linear(A, B);
+      rows = r.map((x, i) => ({ n: 'XYZ'[i], txt: cxFmtNum(x), val: x }));
+    }
+  } catch (e) { $('cxEqnRes').innerHTML = `<div class="err">${esc(e.kind || 'Error')}: ${esc(e.message)}</div>`; return; }
+  CX.eqRows = rows;
+  $('cxEqnRes').innerHTML = rows.map((r, i) => `<div class="r"><b>${r.n} =</b><span>${esc(r.txt)}</span>${r.val !== null ? `<button data-eq="${i}" title="Use this value in the calculator (becomes Ans)">use</button>` : ''}</div>`).join('');
+}
+/* ---- open / close / answer box ---- */
+function openCalc() { $('calcWin').classList.remove('hidden'); if ($('btnCalc')) $('btnCalc').textContent = '🧮 Close calculator'; cxFocus(); }
+function closeCalc() { $('calcWin').classList.add('hidden'); $('cxFmt').classList.add('hidden'); if ($('btnCalc')) $('btnCalc').textContent = '🧮 Open calculator'; }
+function cxInit() {
+  cxBuildKeys(); cxInd(); cxRenderHist();
+  if ($('btnCalc')) $('btnCalc').onclick = () => $('calcWin').classList.contains('hidden') ? openCalc() : closeCalc();
+  $('calcClose').onclick = closeCalc;
+  $('cxKeys').addEventListener('pointerdown', e => { if (e.target.closest('button')) e.preventDefault(); });   // keep the cursor in the display
+  $('cxKeys').addEventListener('click', e => { const b = e.target.closest('button'); if (b) cxKey(b); });
+  $('cxAng').onclick = () => { CX.st.angle = { DEG: 'RAD', RAD: 'GRA', GRA: 'DEG' }[CX.st.angle]; cxInd(); cxPreview(); if (CX.done && CX.last && CX.last.src && !CX.last.kind) cxRun(); };
+  $('cxFmtBtn').onclick = () => { $('cxFmt').classList.toggle('hidden'); cxFmtSync(); };
+  $('cxFmtModes').onclick = e => { const b = e.target.closest('button'); if (!b) return; CX.fmt.mode = b.dataset.m; if (b.dataset.m === 'Sci' && CX.fmt.digits < 1) CX.fmt.digits = 4; cxFmtSync(); };
+  $('cxFmtDigits').onclick = e => { const b = e.target.closest('button'); if (!b) return; CX.fmt.digits = +b.dataset.d; if (CX.fmt.mode === 'Sci' && CX.fmt.digits === 0) CX.fmt.digits = 10; cxFmtSync(); };
+  $('cxIn').addEventListener('input', () => { CX.done = false; cxPreview(); });
+  $('cxIn').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); cxRun(); return; }
+    if (e.key === 'ArrowUp') { e.preventDefault(); cxAction('UP'); return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); cxAction('DOWN'); return; }
+    const map = { '*': '×', '/': '÷' };
+    if (map[e.key]) { e.preventDefault(); cxInsert(map[e.key]); return; }
+    if (CX.done && e.key.length === 1 && !e.ctrlKey && !e.metaKey) { e.preventDefault(); cxInsert(e.key); }   // continue after "=" like a real calculator
+  });
+  $('cxBar').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.x) return cxBar(null);
+    if (b.dataset.go) return cxBarGo();
+    if (b.dataset.var) {
+      const v = b.dataset.var;
+      if (CX.bar === 'STO') { CX.st.vars[v] = CX.st.ans; toast(v + ' = ' + cxFmtNum(CX.st.ans)); cxBar(null); }
+      else { cxBar(null); cxInsert(v); }
+    }
+  });
+  $('cxHist').addEventListener('click', e => {
+    const s = e.target.closest('[data-i]'), v = e.target.closest('[data-v]');
+    if (s) { cxSetInput(CX.hist[+s.dataset.i].src.replace(/^SOLVE /, '')); cxFocus(); }
+    if (v) { cxInsert(cxPlain(CX.hist[+v.dataset.v].v)); }
+  });
+  $('cxHistClr').onclick = () => { CX.hist = []; cxRenderHist(); };
+  $('cxEqnTabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; CX.eqType = b.dataset.t; cxEqnForm(); };
+  $('cxEqnGo').onclick = cxEqnSolve;
+  $('cxEqnBack').onclick = () => { $('cxEqn').classList.add('hidden'); $('cxKeys').classList.remove('hidden'); cxFocus(); };
+  $('cxEqnRes').addEventListener('click', e => {
+    const b = e.target.closest('[data-eq]'); if (!b) return;
+    const r = CX.eqRows[+b.dataset.eq]; CX.st.ans = r.val; CX.last = { value: r.val, src: r.n }; CX.done = true; CX.view = 'dec';
+    cxAddHist('EQN ' + r.n, r.val); $('cxEqnBack').click(); cxSetInput(''); CX.done = true; cxShowValue();
+  });
+  $('calcUse').onclick = () => {
+    const q = (typeof S !== 'undefined' && S.exam) ? S.exam.questions[S.idx] : null;
+    if (!q || q.type !== 'numeric') return toast('Open a numerical question first');
+    if (!CX.last) return toast('Calculate something first');
+    const inp = document.querySelector('#qAns input.num');
+    if (inp) { inp.value = cxPlain(CX.st.ans); if (inp.oninput) inp.oninput(); toast('Result placed in the answer box – round it as the question asks'); }
+  };
+  (function dragCalc() {                            // move the window by its title bar
+    const w = $('calcWin'), h = $('calcHead'); let sx, sy, ox, oy, on = false;
+    h.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; on = true; sx = e.clientX; sy = e.clientY; const r = w.getBoundingClientRect(); ox = r.left; oy = r.top; try { h.setPointerCapture(e.pointerId); } catch (_) {} });
+    h.addEventListener('pointermove', e => { if (!on) return; const x = Math.min(Math.max(0, ox + e.clientX - sx), innerWidth - w.offsetWidth), y = Math.min(Math.max(0, oy + e.clientY - sy), Math.max(0, innerHeight - 60)); w.style.left = x + 'px'; w.style.top = y + 'px'; w.style.right = 'auto'; });
+    h.addEventListener('pointerup', () => { on = false; });
+  })();
+}
+function cxFmtSync() {
+  document.querySelectorAll('#cxFmtModes button').forEach(b => b.classList.toggle('on', b.dataset.m === CX.fmt.mode));
+  document.querySelectorAll('#cxFmtDigits button').forEach(b => b.classList.toggle('on', +b.dataset.d === CX.fmt.digits));
+  $('cxFmtDigits').style.display = $('cxFmtDT').style.display = (CX.fmt.mode === 'Fix' || CX.fmt.mode === 'Sci') ? '' : 'none';
+  $('cxFmtDT').textContent = CX.fmt.mode === 'Sci' ? 'Significant digits (Sci, 0 = 10)' : 'Decimal places (Fix)';
+  cxInd(); if (CX.last) cxShowValue(); cxRenderHist(); cxPreview();
+}
+cxInit();
 
 /* ===================================================================== */
 initLogin();
